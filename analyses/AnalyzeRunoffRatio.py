@@ -34,7 +34,7 @@ def analyzeRunoffRatio():
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "runoffRatioValues.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_runoffRatio.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

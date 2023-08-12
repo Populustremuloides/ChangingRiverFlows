@@ -41,7 +41,7 @@ def analyzeMASD():
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "masdValues.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_masd.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

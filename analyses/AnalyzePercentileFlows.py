@@ -4,13 +4,10 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-def _getDayOfMeanFlow(flow):
-    dayInWaterYear = np.arange(flow.shape[0])
-    dayOfMeanFlow = np.sum(dayInWaterYear * flow) / flow.shape[0]
-    return dayOfMeanFlow
+# FIXME: not sure what to do here
 
-def analyzeDOMF():
-    dataDict = {"catchment":[],"domfSlope":[],"domfMean":[]}
+def analyzeDOPF():
+    dataDict = {"catchment":[],"dopfSlope":[],"dopfMean":[]}
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
@@ -23,28 +20,28 @@ def analyzeDOMF():
         waterYears = np.unique(df[waterYearVar])
 
         # loop through every water year and calculate the day of mean flow
-        domfs = []
+        dopfs = []
         for waterYear in waterYears:
             ldf = df[df[waterYearVar] == waterYear]
             flowForWaterYear = np.array(ldf[dischargeVar])
-            domf = _getDayOfMeanFlow(flowForWaterYear)
-            domfs.append(domf)
+            dopf = (np.argmax(flowForWaterYear) + 1) # +1 for 0 indexing in python
+            dopfs.append(dopf)
 
-        slope = u_regressionFunction(waterYears, domfs)
-        mean = np.mean(domfs)
+        slope = u_regressionFunction(waterYears, dopfs)
+        mean = np.mean(dopfs)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
-        dataDict["domfSlope"].append(slope)
-        dataDict["domfMean"].append(mean)
+        dataDict["dopfSlope"].append(slope)
+        dataDict["dopfMean"].append(mean)
 
-        loop.set_description("Computing days of mean flow")
+        loop.set_description("Computing days of peak flow")
         loop.update(1)
 
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "timeseriesSummary_domf.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_dopf.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()
