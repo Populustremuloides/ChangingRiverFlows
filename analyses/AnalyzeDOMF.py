@@ -31,7 +31,7 @@ def analyzeDOMF():
             domfs.append(domf)
 
         slope = u_regressionFunction(waterYears, domfs)
-        mean = np.mean(mad)
+        mean = np.mean(domfs)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
