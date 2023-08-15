@@ -13,7 +13,7 @@ def analyzeMASD():
     at the direst month of the year.
     '''
 
-    dataDict = {"catchment":[],"masdSlope":[],"masdMean":[]}
+    dataDict = {"catchment":[],"masdSlope":[],"masdMean":[], "masdPercentChange":[]}
 
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
@@ -26,7 +26,7 @@ def analyzeMASD():
 
         df = df.groupby(waterYearVar).mean()
         masd = df[specificDischargeVar]
-        waterYears = df[waterYearVar]
+        waterYears = list(df.index)
 
         slope = u_regressionFunction(waterYears, masd)
         mean = np.mean(masd)
@@ -35,6 +35,7 @@ def analyzeMASD():
         dataDict["catchment"].append(cat)
         dataDict["masdSlope"].append(slope)
         dataDict["masdMean"].append(mean)
+        dataDict["masdPercentChange"].append(slope / mean)
 
         loop.set_description("Computing mean annual specific discharges")
         loop.update(1)

@@ -23,9 +23,9 @@ specificPrecipVar = "precipitation"  # FIXME: this needs to be updated
 etVar = "ET [kg/m^2/8day]"
 specificETVar = "ET [kg/m^2/8day]" # FIXME: this needs to be updated
 
+petVar = "PET" # FIXME: this needs to be updated
+specificPETVar = "PET" # FIXME: this needs to be updated
 
-petVar = "ET [kg/m^2/8day]" # FIXME: this needs to be updated
-specificPETVar = "ET [kg/m^2/8day]" # FIXME: this needs to be updated
 # get the current working directory
 rootPath = os.getcwd()
 sys.path.append(rootPath)
@@ -39,7 +39,7 @@ dataPath = os.path.join(rootPath, "data")
 #sys.path.append(dataPath)
 
 # get the PureSeries folder
-pureSeriesPath = os.path.join(dataPath, "PureSeries")
+pureSeriesPath = os.path.join(dataPath, "fakeData") # FIXME: put back PureSeries
 #sys.path.append(pureSeriesPath)
 
 # get the output

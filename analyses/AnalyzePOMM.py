@@ -6,6 +6,7 @@ from tqdm import tqdm
 
 from scipy.signal import blackman
 
+#import matplotlib.pyplot as plt
 
 def _getPeriodOfMeanMagnitude(flow):
     #flow = flow[:365] # ignore leap day because that will introduce bias?
@@ -14,11 +15,13 @@ def _getPeriodOfMeanMagnitude(flow):
 
     numDays = flow.shape[0]
     dt = 1. # one day per measurement
-    periods = 1. / np.fft.rfftfreq(maxDays, d=dt)
+    periods = 1. / np.fft.rfftfreq(numDays, d=dt)[1:] # ignore the infinite time-horizon element
 
     w = blackman(flow.shape[0]) # use a blackman filter to reduce spectral leakage
     result = np.fft.rfft(flow * w)
     magnitudes = np.abs(result) ** 2
+
+    magnitudes = magnitudes[1:] # ignore the infinite time horizon element
 
     periodOfMeanMagnitude = np.sum(periods * magnitudes) / periods.shape[0]
 
@@ -38,7 +41,7 @@ def analyzePOMM():
         waterYears = np.unique(df[waterYearVar])
 
         # loop through every water year and calculate the period of mean mangitude
-        domfs = []
+        pomms = []
         for waterYear in waterYears:
             ldf = df[df[waterYearVar] == waterYear]
             flowForWaterYear = np.array(ldf[dischargeVar])
@@ -59,7 +62,7 @@ def analyzePOMM():
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "pommValues.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_pomm.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

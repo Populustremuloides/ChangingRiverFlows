@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 # cycle through the data and calculate the runoff ratios
 def analyzeRunoffRatio():
-    dataDict = {"catchment":[],"runoffRatioSlope":[],"runoffRatioMean":[]}
+    dataDict = {"catchment":[],"runoffRatioSlope":[],"runoffRatioMean":[], "runoffRatioPercentChange":[]}
 
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
@@ -18,8 +18,9 @@ def analyzeRunoffRatio():
         cat = u_getCatchmentName(file)
 
         df = df.groupby(waterYearVar).mean()
+
         runoffRatios = df[dischargeVar] / df[precipVar]
-        waterYears = df[waterYearVar]
+        waterYears = list(df.index) #[waterYearVar]
 
         slope = u_regressionFunction(waterYears, runoffRatios)
         mean = np.mean(runoffRatios)
@@ -28,6 +29,7 @@ def analyzeRunoffRatio():
         dataDict["catchment"].append(cat)
         dataDict["runoffRatioSlope"].append(slope)
         dataDict["runoffRatioMean"].append(mean)
+        dataDict["runoffRatioPercentChange"].append(slope / mean)
 
         loop.set_description("Computing runoff ratios")
         loop.update(1)
