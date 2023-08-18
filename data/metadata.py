@@ -22,7 +22,6 @@ specificPrecipVar = "precipitation"  # FIXME: this needs to be updated
 
 etVar = "ET [kg/m^2/8day]"
 specificETVar = "ET [kg/m^2/8day]" # FIXME: this needs to be updated
-
 petVar = "PET" # FIXME: this needs to be updated
 specificPETVar = "PET" # FIXME: this needs to be updated
 
@@ -36,6 +35,7 @@ sys.path.append(analysesPath)
 
 # get the data folder
 dataPath = os.path.join(rootPath, "data")
+metadataPath = os.path.join(dataPath, "metadata.csv")
 #sys.path.append(dataPath)
 
 # get the PureSeries folder

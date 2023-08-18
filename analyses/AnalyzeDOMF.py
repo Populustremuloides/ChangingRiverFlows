@@ -4,11 +4,6 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-def _getDayOfMeanFlow(flow):
-    dayInWaterYear = np.arange(flow.shape[0])
-    dayOfMeanFlow = np.sum(dayInWaterYear * flow) / flow.shape[0]
-    return dayOfMeanFlow
-
 def analyzeDOMF():
     dataDict = {"catchment":[],"domfSlope":[],"domfMean":[]}
 
@@ -27,7 +22,7 @@ def analyzeDOMF():
         for waterYear in waterYears:
             ldf = df[df[waterYearVar] == waterYear]
             flowForWaterYear = np.array(ldf[dischargeVar])
-            domf = _getDayOfMeanFlow(flowForWaterYear)
+            domf = u_getDayOfMeanMagnitude(flowForWaterYear)
             domfs.append(domf)
 
         slope = u_regressionFunction(waterYears, domfs)

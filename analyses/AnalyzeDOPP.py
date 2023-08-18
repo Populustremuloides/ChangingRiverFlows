@@ -4,14 +4,8 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-from scipy.signal import blackman
-
-#import matplotlib.pyplot as plt
-
-
-
-def analyzePOMM():
-    dataDict = {"catchment":[],"pommSlope":[],"pommMean":[]}
+def analyzeDOPP():
+    dataDict = {"catchment":[],"doppSlope":[],"doppMean":[]}
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
@@ -23,29 +17,29 @@ def analyzePOMM():
 
         waterYears = np.unique(df[waterYearVar])
 
-        # loop through every water year and calculate the period of mean mangitude
-        pomms = []
+        # loop through every water year and calculate the day of mean flow
+        dopps = []
         for waterYear in waterYears:
             ldf = df[df[waterYearVar] == waterYear]
-            flowForWaterYear = np.array(ldf[dischargeVar])
-            pomm = _getPeriodOfMeanMagnitude(flowForWaterYear)
-            pomms.append(pomm)
+            precipForWaterYear = np.array(ldf[precipVar])
+            dopp = (np.argmax(precipForWaterYear) + 1) # +1 for 0 indexing in python
+            dopps.append(dopp)
 
-        slope = u_regressionFunction(waterYears, pomms)
-        mean = np.mean(pomms)
+        slope = u_regressionFunction(waterYears, dopps)
+        mean = np.mean(dopps)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
-        dataDict["pommSlope"].append(slope)
-        dataDict["pommMean"].append(mean)
+        dataDict["doppSlope"].append(slope)
+        dataDict["doppMean"].append(mean)
 
-        loop.set_description("Computing periods of mean mangitude")
+        loop.set_description("Computing days of peak precip")
         loop.update(1)
 
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "timeseriesSummary_pomm.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_dopp.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

@@ -4,16 +4,17 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-def analyzeET():
+def analyzeMASPET():
     '''
     calculates the mean and slope values for
-    the actual evapotranspiration
+    maspet: mean annual potential evapotranspiration
     for each catchment, with years divided
     by a catchment-specific water year starting
     at the direst month of the year.
     '''
 
-    dataDict = {"catchment":[],"etSlope":[],"etMean":[], "etPercentChange":[]}
+    dataDict = {"catchment":[],"maspetSlope":[],"maspetMean":[], "maspetPercentChange":[]}
+
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
@@ -24,24 +25,24 @@ def analyzeET():
         cat = u_getCatchmentName(file)
 
         df = df.groupby(waterYearVar).mean()
-        et = df[etVar]
+        maspet = df[specificPETVar]
         waterYears = list(df.index)
 
-        slope = u_regressionFunction(waterYears, et)
-        mean = np.mean(et)
+        slope = u_regressionFunction(waterYears, maspet)
+        mean = np.mean(maspet)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
-        dataDict["etSlope"].append(slope)
-        dataDict["etMean"].append(mean)
-        dataDict["etPercentChange"].append(slope / mean)
+        dataDict["maspetSlope"].append(slope)
+        dataDict["maspetMean"].append(mean)
+        dataDict["maspetPercentChange"].append(slope / mean)
 
-        loop.set_description("Computing mean annual evapotranspiration changes")
+        loop.set_description("Computing mean annual specific potential evapotranspiration")
         loop.update(1)
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "timeseriesSummary_et.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_maspet.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

@@ -4,14 +4,8 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-from scipy.signal import blackman
-
-#import matplotlib.pyplot as plt
-
-
-
-def analyzePOMM():
-    dataDict = {"catchment":[],"pommSlope":[],"pommMean":[]}
+def analyzeDOMPET():
+    dataDict = {"catchment":[],"dompetSlope":[],"dompetMean":[]}
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
@@ -23,29 +17,29 @@ def analyzePOMM():
 
         waterYears = np.unique(df[waterYearVar])
 
-        # loop through every water year and calculate the period of mean mangitude
-        pomms = []
+        # loop through every water year and calculate the day of mean evapotranspiration
+        dompets = []
         for waterYear in waterYears:
             ldf = df[df[waterYearVar] == waterYear]
-            flowForWaterYear = np.array(ldf[dischargeVar])
-            pomm = _getPeriodOfMeanMagnitude(flowForWaterYear)
-            pomms.append(pomm)
+            petForWaterYear = np.array(ldf[petVar])
+            dompet = u_getDayOfMeanMagnitude(petForWaterYear)
+            dompets.append(dompet)
 
-        slope = u_regressionFunction(waterYears, pomms)
-        mean = np.mean(pomms)
+        slope = u_regressionFunction(waterYears, dompets)
+        mean = np.mean(dompets)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
-        dataDict["pommSlope"].append(slope)
-        dataDict["pommMean"].append(mean)
+        dataDict["dompetSlope"].append(slope)
+        dataDict["dompetMean"].append(mean)
 
-        loop.set_description("Computing periods of mean mangitude")
+        loop.set_description("Computing days of mean potential evapotranspiration")
         loop.update(1)
 
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "timeseriesSummary_pomm.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_dompet.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

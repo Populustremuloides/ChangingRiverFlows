@@ -4,14 +4,14 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-from scipy.signal import blackman
 
-#import matplotlib.pyplot as plt
+def analyzePOMMPET():
+    '''
+    Calculate the changes in annual spectral properties of the
+    potential evapotranspiration timeseries, per catchment, per year
+    '''
 
-
-
-def analyzePOMM():
-    dataDict = {"catchment":[],"pommSlope":[],"pommMean":[]}
+    dataDict = {"catchment":[],"pommpetSlope":[],"pommpetMean":[]}
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
@@ -24,28 +24,28 @@ def analyzePOMM():
         waterYears = np.unique(df[waterYearVar])
 
         # loop through every water year and calculate the period of mean mangitude
-        pomms = []
+        pommpets = []
         for waterYear in waterYears:
             ldf = df[df[waterYearVar] == waterYear]
-            flowForWaterYear = np.array(ldf[dischargeVar])
-            pomm = _getPeriodOfMeanMagnitude(flowForWaterYear)
-            pomms.append(pomm)
+            petForWaterYear = np.array(ldf[petVar])
+            pommpet = u_getPeriodOfMeanMagnitude(petForWaterYear)
+            pommpets.append(pommpet)
 
-        slope = u_regressionFunction(waterYears, pomms)
-        mean = np.mean(pomms)
+        slope = u_regressionFunction(waterYears, pommpets)
+        mean = np.mean(pommpets)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
-        dataDict["pommSlope"].append(slope)
-        dataDict["pommMean"].append(mean)
+        dataDict["pommpetSlope"].append(slope)
+        dataDict["pommpetMean"].append(mean)
 
-        loop.set_description("Computing periods of mean mangitude")
+        loop.set_description("Computing periods of mean mangitude for pet")
         loop.update(1)
 
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "timeseriesSummary_pomm.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_pommpet.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()
