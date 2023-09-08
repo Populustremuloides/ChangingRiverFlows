@@ -40,6 +40,18 @@ from analyses.AnalyzePOMMPET import analyzePOMMPET
 # later stage analyses ********************************
 from analyses.CombineResults import combineResults
 
+# analzye correlations between variables *************
+from analyses.AnalyzeCorrelations import analyzeCorrelations
+from analyses.AnalyzeCorrelationsLinear import analyzeCorrelationsLinear
+from analyses.AnalyzeCorrelationsNonlinear import analyzeCorrelationsNonlinear
+from analyses.AnalyzeCorrelationsFigure import analyzeCorrelationsFigure
+
+from analyses.AnalyzeBudykoChanges import analyzeBudykoChanges
+
+#from analyses.colorCatchments import * # FIXME: remove this
+from analyses.MapAll import mapAll # FIXME: remove this
+
+
 def main():
     # adjust timeseries for ease of computation ***************************
     #addLocalWaterYear()
@@ -86,13 +98,23 @@ def main():
     # combine the data with the metadata
     #combineResults()
 
-    # linear regression analysis
+    # Identify important variables
+    analyzeCorrelations() # visual representation connections between variables
+    analyzeCorrelationsLinear() # linear regression analysis
+    analyzeCorrelationsNonlinear() # ml regression analysis
+    analyzeCorrelationsFigure() # combine together into figures
+
+    #analyzeBudykoChanges()
 
     # relationships with important variables
+
 
     # distribution figures
 
     # global figures
+    mapAll()
+
+
 
 if __name__ == "__main__":
     main()

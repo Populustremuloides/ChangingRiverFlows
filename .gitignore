@@ -1,0 +1,14 @@
+
+output
+data/fakeData
+data/metadata.py
+data/PureSeries
+data/makeFakeData.py
+analyses/__pycache__/*.pyc
+data/__pycache__/*.pyc
+]
+.DS_Store
+analyses/.DS_Store
+data/.DS_Store
+.DS_Store
+.gitingore
