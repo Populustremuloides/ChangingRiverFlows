@@ -8,13 +8,13 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
 import copy
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 
-def getDroppers(df, tag):
+def getDroppers(df):
     droppers = []
     keepers = []
 
-    with open(os.path.join(logPath, "log_analysis_nonlinearCorelations_" + str(tag) + ".txt"), "w+") as logFile:
+    with open(os.path.join(logPath, "log_analysis_linearCorelations_imputedPCA.txt"), "w+") as logFile:
         logFile.writelines("The following columns were dropped from the analysis because they had > 0.1 proportion nan values:\n")
         for col in df.columns:
             proportionNan =  float(np.sum(df[col].isna())) / float(len(df[col]))
@@ -37,14 +37,12 @@ def getTrainMask(df):
     mask = np.array(([False] * numTest) + ([True] * numTrain))
     return mask
 
-# cycle through the data and calculate the runoff ratios
-def nonlinearAnalysis(df, tag, numRepeats):
-
+def linearAnalysis(df, numRepeats):
     predictableVars = list(predictablesToPretty.keys())
-    predictorVars = list(predictorsToPretty.keys())
+    predictorVars = list(predictorsToPrettyPCA.keys())
 
     predictorsDf = df[predictorVars]
-    droppers, keepers  = getDroppers(predictorsDf, tag)
+    droppers, keepers  = getDroppers(predictorsDf)
 
     # prepare to save the data
     dataDict = {"target":[],"score":[]}
@@ -67,8 +65,7 @@ def nonlinearAnalysis(df, tag, numRepeats):
             mask = np.random.choice(mask, size=mask.shape[0], replace=False)
             trainDf = ldf[mask]
             testDf = ldf[~mask]
-
-            # separate out target vs features
+            # separate out the data
             yTest = testDf[predictable].to_numpy()
             xTest = testDf[testDf.columns[:-1]].to_numpy()
 
@@ -76,39 +73,37 @@ def nonlinearAnalysis(df, tag, numRepeats):
             xTrain = trainDf[trainDf.columns[:-1]].to_numpy()
 
             # run the model
-            model = RandomForestRegressor()
+            model = LinearRegression()
             model.fit(xTrain,yTrain)
             score = model.score(xTest, yTest)
-            importances = model.feature_importances_
+            coefficients = model.coef_
 
             cols = list(trainDf.columns[:-1])
-            colsToImportances = dict(zip(cols, importances))
+            colsToCoefficients = dict(zip(cols, coefficients))
 
             # save the data
             dataDict["target"].append(predictable)
             dataDict["score"].append(score)
             for predictorVar in predictorVars:
-                if predictorVar in colsToImportances:
-                    dataDict[predictorVar].append(colsToImportances[predictorVar])
+                if predictorVar in colsToCoefficients:
+                    dataDict[predictorVar].append(colsToCoefficients[predictorVar])
                 else:
                     dataDict[predictorVar].append(None)
 
-            loop.set_description("Computing nonlinear correlates of changes in flow")
+            loop.set_description("Computing linear correlates of changes in flow")
             loop.update(1)
-
     loop.close()
 
     coefficientsDf = pd.DataFrame.from_dict(dataDict)
-    coefficientsDf.to_csv(os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_" + str(tag) + ".csv"), index=False)
+    coefficientsDf.to_csv(os.path.join(outputFilesPath, "regressionCoefficientsLinear_imputedPCA.csv"), index=False)
 
-
-def analyzeCorrelationsNonlinear():
+# cycle through the data and calculate the runoff ratios
+def analyzeCorrelationsLinearPCA():
     numRepeats = 10
 
-    tags = ["raw","imputed"]
+    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedPCA.csv")
+    df = pd.read_csv(dataFilePath)
+    linearAnalysis(df, numRepeats)
 
-    for tag in tags:
-        dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
-        df = pd.read_csv(dataFilePath)
-        nonlinearAnalysis(df, tag, numRepeats)
+
 

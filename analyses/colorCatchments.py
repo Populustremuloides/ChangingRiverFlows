@@ -14,10 +14,11 @@ return colors used for figures in a way that is consistent
 across figures.
 '''
 
-dfPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata.csv")
-df = pd.read_csv(dfPath)
 
-logPath = os.path.join(outputFilesPath, "mappingLog.txt")
+
+# will break if functions are called before combinedTimeseriesSummariesAndMetadata.csv is computed
+
+logPath = os.path.join(logPath, "log_mappingLog.txt")
 with open(logPath, "w+") as logFile:
     pass # reset log file
 
@@ -74,7 +75,7 @@ def getCmapFromString(cmapString):
     return cmap
 
 
-def _printTruncation(var, lowerBound, upperBound, transform=None):
+def _printTruncation(var, lowerBound, upperBound, df, transform=None):
     if transform != None:
         numTruncated = np.sum(transform(df[var]) < lowerBound) + np.sum(transform(df[var]) > upperBound)
     else:
@@ -95,26 +96,26 @@ def transform_maspMeanLog(array):
     array = np.array(array)
     return np.log(array + 1)
 
-def getNorm_maspMeanLog(printTruncation=False):
+def getNorm_maspMeanLog(df, printTruncation=True):
     var = "maspMean"
     norm = mpl.colors.Normalize(vmin=2, vmax=np.max(transform_maspMeanLog(df[var])))
     lowerBound = 2 #FIXME: change this
     upperBound = np.inf #FIXME: change this
     if printTruncation:
-        _printTruncation(var, lowerBound, upperBound)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_maspMeanLog(cmap):
-    norm = getNorm_maspMeanLog()
+def getM_maspMeanLog(cmap, df):
+    norm = getNorm_maspMeanLog(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_maspMeanLog(cmap, save=False, pLeft=False):
+def colorbar_maspMeanLog(cmap, df, save=False, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_maspMeanLog(printTruncation=True)
-    m = getM_maspMeanLog(cmap)
+    norm = getNorm_maspMeanLog(df, printTruncation=True)
+    m = getM_maspMeanLog(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -138,20 +139,20 @@ def colorbar_maspMeanLog(cmap, save=False, pLeft=False):
 # mean annual temperature
 # *********************************************************************************
 
-def getNorm_matMean(printTruncation=False):
+def getNorm_matMean(df, printTruncation=True):
     norm = mpl.colors.Normalize(vmin=np.min(df["matMean"]), vmax=np.max(df["matMean"]))
     return norm
 
-def getM_matMean(cmap):
-    norm = getNorm_MeanTempAnn()
+def getM_matMean(cmap, df):
+    norm = getNorm_MeanTempAnn(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_matMean(cmap, pLeft=False):
+def colorbar_matMean(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_matMean()
-    m = getM_matMean(cmap)
+    norm = getNorm_matMean(df)
+    m = getM_matMean(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -174,20 +175,20 @@ def colorbar_matMean(cmap, pLeft=False):
 # *********************************************************************************
 # stream order (gord)
 # *********************************************************************************
-def getNorm_gord(printTruncation=False):
+def getNorm_gord(df, printTruncation=True):
     norm = mpl.colors.Normalize(vmin=np.min(df["gord"]), vmax=np.max(df["gord"]))
     return norm
 
-def getM_gord(cmap):
-    norm = getNorm_gord()
+def getM_gord(cmap, df):
+    norm = getNorm_gord(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_gord(cmap, pLeft=False):
+def colorbar_gord(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_gord()
-    m = getM_gord(cmap)
+    norm = getNorm_gord(df)
+    m = getM_gord(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -214,25 +215,25 @@ def colorbar_gord(cmap, pLeft=False):
 #plt.hist(df["masdMean"])
 #plt.clf()
 
-def getNorm_masdMean(printTruncation=False):
+def getNorm_masdMean(df, printTruncation=True):
     var = "masdMean"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-        _printTruncation(var, lowerBound, upperBound)
+        _printTruncation(var, lowerBound, upperBound, df)
     return norm
 
-def getM_masdMean(cmap):
-    norm = getNorm_masdMean()
+def getM_masdMean(cmap, df):
+    norm = getNorm_masdMean(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_masdMean(cmap, pLeft=False):
+def colorbar_masdMean(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_masdMean(printTruncation=True)
-    m = getM_masdMean(cmap)
+    norm = getNorm_masdMean(df, printTruncation=True)
+    m = getM_masdMean(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -259,26 +260,26 @@ def colorbar_masdMean(cmap, pLeft=False):
 #plt.hist(df["masdSlope"])
 #plt.clf()
 
-def getNorm_masdSlope(printTruncation=False):
+def getNorm_masdSlope(df, printTruncation=True):
     var = "masdSlope"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-        _printTruncation(var, lowerBound, upperBound)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_masdSlope(cmap):
-    norm = getNorm_masdSlope()
+def getM_masdSlope(cmap, df):
+    norm = getNorm_masdSlope(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_masdSlope(cmap, pLeft=False):
+def colorbar_masdSlope(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_masdSlope(printTruncation=True)
-    m = getM_masdSlope(cmap)
+    norm = getNorm_masdSlope(df, printTruncation=True)
+    m = getM_masdSlope(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -305,26 +306,26 @@ def colorbar_masdSlope(cmap, pLeft=False):
 #plt.hist(df["masdPercentChange"])
 #plt.clf()
 
-def getNorm_masdPercentChange(printTruncation=False):
+def getNorm_masdPercentChange(df, printTruncation=True):
     var = "masdPercentChange"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-        _printTruncation(var, lowerBound, upperBound)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_masdPercentChange(cmap):
-    norm = getNorm_masdPercentChange()
+def getM_masdPercentChange(cmap, df):
+    norm = getNorm_masdPercentChange(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_masdPercentChange(cmap, pLeft=False):
+def colorbar_masdPercentChange(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_masdPercentChange(printTruncation=True)
-    m = getM_masdPercentChange(cmap)
+    norm = getNorm_masdPercentChange(df, printTruncation=True)
+    m = getM_masdPercentChange(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -351,21 +352,21 @@ def colorbar_masdPercentChange(cmap, pLeft=False):
 #plt.hist(df["domfMean"])
 #plt.clf()
 
-def getNorm_domfMean():
+def getNorm_domfMean(df):
     domf_means = df["domfMean"]
     norm = mpl.colors.Normalize(vmin=np.min(domf_means), vmax=np.max(domf_means))
     return norm
 
-def getM_domfMean(cmap):
-    norm = getNorm_domfMean()
+def getM_domfMean(cmap, df):
+    norm = getNorm_domfMean(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_domfMean(cmap, pLeft=False):
+def colorbar_domfMean(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_domfMean()
-    m = getM_domfMean(cmap)
+    norm = getNorm_domfMean(df)
+    m = getM_domfMean(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -392,26 +393,26 @@ def colorbar_domfMean(cmap, pLeft=False):
 #plt.hist(df["domfSlope"])
 #plt.clf()
 
-def getNorm_domfSlope(printTruncation=False):
+def getNorm_domfSlope(df, printTruncation=True):
     var = "domfSlope"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound)
+       _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_domfSlope(cmap):
-    norm = getNorm_domfSlope()
+def getM_domfSlope(cmap, df):
+    norm = getNorm_domfSlope(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_domfSlope(cmap, pLeft=False):
+def colorbar_domfSlope(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_domfSlope(printTruncation=True)
-    m = getM_domfSlope(cmap)
+    norm = getNorm_domfSlope(df, printTruncation=True)
+    m = getM_domfSlope(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -437,21 +438,21 @@ def colorbar_domfSlope(cmap, pLeft=False):
 #plt.hist(df["dopfMean"])
 #plt.clf()
 
-def getNorm_dopfMean():
+def getNorm_dopfMean(df):
     domf_means = df["dopfMean"]
     norm = mpl.colors.Normalize(vmin=np.min(domf_means), vmax=np.max(domf_means))
     return norm
 
-def getM_dopfMean(cmap):
-    norm = getNorm_dopfMean()
+def getM_dopfMean(cmap, df):
+    norm = getNorm_dopfMean(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_dopfMean(cmap, pLeft=False):
+def colorbar_dopfMean(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_dopfMean()
-    m = getM_dopfMean(cmap)
+    norm = getNorm_dopfMean(df)
+    m = getM_dopfMean(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -478,26 +479,26 @@ def colorbar_dopfMean(cmap, pLeft=False):
 #plt.hist(df["dopfSlope"])
 #plt.clf()
 
-def getNorm_dopfSlope(printTruncation=False):
+def getNorm_dopfSlope(df, printTruncation=True):
     var = "dopfSlope"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound)
+       _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_dopfSlope(cmap):
-    norm = getNorm_dopfSlope()
+def getM_dopfSlope(cmap, df):
+    norm = getNorm_dopfSlope(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_dopfSlope(cmap, pLeft=False):
+def colorbar_dopfSlope(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_dopfSlope(printTruncation=True)
-    m = getM_dopfSlope(cmap)
+    norm = getNorm_dopfSlope(df, printTruncation=True)
+    m = getM_dopfSlope(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -525,26 +526,26 @@ def colorbar_dopfSlope(cmap, pLeft=False):
 #plt.hist(df["pommfMean"])
 #plt.clf()
 
-def getNorm_pommfMean(printTruncation=False):
+def getNorm_pommfMean(df, printTruncation=True):
     var = "pommfMean"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-        _printTruncation(var, lowerBound, upperBound)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_pommfMean(cmap):
-    norm = getNorm_pommfMean()
+def getM_pommfMean(cmap, df):
+    norm = getNorm_pommfMean(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_pommfMean(cmap, pLeft=False):
+def colorbar_pommfMean(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_pommfMean(printTruncation=True)
-    m = getM_pommfMean(cmap)
+    norm = getNorm_pommfMean(df, printTruncation=True)
+    m = getM_pommfMean(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -570,26 +571,26 @@ def colorbar_pommfMean(cmap, pLeft=False):
 #plt.hist(df["pommfSlope"])
 #plt.clf()
 
-def getNorm_pommfSlope(printTruncation=False):
+def getNorm_pommfSlope(df, printTruncation=True):
     var = "pommfSlope"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound)
+       _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_pommfSlope(cmap):
-    norm = getNorm_pommfSlope()
+def getM_pommfSlope(cmap, df):
+    norm = getNorm_pommfSlope(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_pommfSlope(cmap, pLeft=False):
+def colorbar_pommfSlope(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_pommfSlope(printTruncation=True)
-    m = getM_pommfSlope(cmap)
+    norm = getNorm_pommfSlope(df, printTruncation=True)
+    m = getM_pommfSlope(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -617,26 +618,26 @@ def colorbar_pommfSlope(cmap, pLeft=False):
 #plt.hist(df["d_pMean"])
 #plt.clf()
 
-def getNorm_d_pMean(printTruncation=False):
+def getNorm_d_pMean(df, printTruncation=True):
     var = "d_pMean"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound)
+       _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_d_pMean(cmap):
-    norm = getNorm_d_pMean()
+def getM_d_pMean(cmap, df):
+    norm = getNorm_d_pMean(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_d_pMean(cmap, pLeft=False):
+def colorbar_d_pMean(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_d_pMean(printTruncation=True)
-    m = getM_d_pMean(cmap)
+    norm = getNorm_d_pMean(df, printTruncation=True)
+    m = getM_d_pMean(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -663,26 +664,26 @@ def colorbar_d_pMean(cmap, pLeft=False):
 #plt.hist(df["d_Slope"])
 #plt.clf()
 
-def getNorm_d_pSlope(printTruncation=False):
+def getNorm_d_pSlope(df, printTruncation=True):
     var = "d_pSlope"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound)
+       _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_d_pSlope(cmap):
-    norm = getNorm_d_pSlope()
+def getM_d_pSlope(cmap, df):
+    norm = getNorm_d_pSlope(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_d_pSlope(cmap, pLeft=False):
+def colorbar_d_pSlope(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_d_pSlope(printTruncation=True)
-    m = getM_d_pSlope(cmap)
+    norm = getNorm_d_pSlope(df, printTruncation=True)
+    m = getM_d_pSlope(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -708,26 +709,26 @@ def colorbar_d_pSlope(cmap, pLeft=False):
 #plt.hist(df["d_pPercentChange"])
 #plt.clf()
 
-def getNorm_d_pPercentChange(printTruncation=False):
+def getNorm_d_pPercentChange(df, printTruncation=True):
     var = "d_pPercentChange"
     lowerBound = -1 # FIXME: change
     upperBound = 1 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound)
+       _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
-def getM_d_pPercentChange(cmap):
-    norm = getNorm_d_pPercentChange()
+def getM_d_pPercentChange(cmap, df):
+    norm = getNorm_d_pPercentChange(df)
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_d_pPercentChange(cmap, pLeft=False):
+def colorbar_d_pPercentChange(cmap, df, pLeft=False):
     fig, ax = plt.subplots(figsize=(3, 10))
 
-    norm = getNorm_d_pPercentChange(printTruncation=True)
-    m = getM_d_pPercentChange(cmap)
+    norm = getNorm_d_pPercentChange(df, printTruncation=True)
+    m = getM_d_pPercentChange(cmap, df)
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
@@ -804,37 +805,37 @@ def getM(variable, cmap):
     m = function(cmap)
     return m
 
-def plotColorbar(variable, cmap, pLeft=False):
+def plotColorbar(variable, cmap, df, pLeft=False):
     if variable == "maspMeanLog":
-        colorbar_MeanPrecAnnLog(cmap, pLeft=pLeft)
+        colorbar_MeanPrecAnnLog(cmap, df, pLeft=pLeft)
     elif variable == "matMean":
-        colorbar_MeanTempAnn(cmap, pLeft=pLeft)
+        colorbar_MeanTempAnn(cmap, df, pLeft=pLeft)
     elif variable == "gord":
-        colorbar_gord(cmap, pLeft=pLeft)
+        colorbar_gord(cmap, df, pLeft=pLeft)
     elif variable == "masdMean":
-        colorbar_masdMean(cmap, pLeft=pLeft)
+        colorbar_masdMean(cmap, df, pLeft=pLeft)
     elif variable == "masdSlope":
-        colorbar_masdSlope(cmap, pLeft=pLeft)
+        colorbar_masdSlope(cmap, df, pLeft=pLeft)
     elif variable == "masdPercentChange":
-        colorbar_masdSlopeNormalized(cmap, pLeft=pLeft)
+        colorbar_masdSlopeNormalized(cmap, df, pLeft=pLeft)
     elif variable == "domfMean":
-        colorbar_domfMean(cmap, pLeft=pLeft)
+        colorbar_domfMean(cmap, df, pLeft=pLeft)
     elif variable == "domfSlope":
-        colorbar_dopfSlope(cmap, pLeft=pLeft)
+        colorbar_dopfSlope(cmap, df, pLeft=pLeft)
     elif variable == "dopfMean":
-        colorbar_dopfMean(cmap, pLeft=pLeft)
+        colorbar_dopfMean(cmap, df, pLeft=pLeft)
     elif variable == "dopfSlope":
-        colorbar_domfSlope(cmap, pLeft=pLeft)
+        colorbar_domfSlope(cmap, df, pLeft=pLeft)
     elif variable == "pommfMean":
-        colorbar_pommfMean(cmap, pLeft=pLeft)
+        colorbar_pommfMean(cmap, df, pLeft=pLeft)
     elif variable == "pommfSlope":
-        colorbar_pommfSlope(cmap, pLeft=pLeft)
+        colorbar_pommfSlope(cmap, df, pLeft=pLeft)
     elif variable == "d_pMean":
-        colorbar_d_pMean(cmap, pLeft=pLeft)
+        colorbar_d_pMean(cmap, df, pLeft=pLeft)
     elif variable == "d_pSlope":
-        colorbar_d_pSlope(cmap, pLeft=pLeft)
+        colorbar_d_pSlope(cmap, df, pLeft=pLeft)
     elif variable == "d_pPercentChange":
-        colorbar_d_pPercentChange(cmap, pLeft=pLeft)
+        colorbar_d_pPercentChange(cmap, df, pLeft=pLeft)
 
     else:
         print(variable, " not recognized as a variable that can be used to color catchments")

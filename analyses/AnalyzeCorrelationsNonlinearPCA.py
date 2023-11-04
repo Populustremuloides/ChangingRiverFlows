@@ -10,11 +10,11 @@ import numpy as np
 import copy
 from sklearn.ensemble import RandomForestRegressor
 
-def getDroppers(df, tag):
+def getDroppers(df):
     droppers = []
     keepers = []
 
-    with open(os.path.join(logPath, "log_analysis_nonlinearCorelations_" + str(tag) + ".txt"), "w+") as logFile:
+    with open(os.path.join(logPath, "log_analysis_nonlinearCorelations.txt"), "w+") as logFile:
         logFile.writelines("The following columns were dropped from the analysis because they had > 0.1 proportion nan values:\n")
         for col in df.columns:
             proportionNan =  float(np.sum(df[col].isna())) / float(len(df[col]))
@@ -38,13 +38,13 @@ def getTrainMask(df):
     return mask
 
 # cycle through the data and calculate the runoff ratios
-def nonlinearAnalysis(df, tag, numRepeats):
+def nonlinearAnalysis(df, numRepeats):
 
     predictableVars = list(predictablesToPretty.keys())
-    predictorVars = list(predictorsToPretty.keys())
+    predictorVars = list(predictorsToPrettyPCA.keys())
 
     predictorsDf = df[predictorVars]
-    droppers, keepers  = getDroppers(predictorsDf, tag)
+    droppers, keepers  = getDroppers(predictorsDf)
 
     # prepare to save the data
     dataDict = {"target":[],"score":[]}
@@ -99,16 +99,13 @@ def nonlinearAnalysis(df, tag, numRepeats):
     loop.close()
 
     coefficientsDf = pd.DataFrame.from_dict(dataDict)
-    coefficientsDf.to_csv(os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_" + str(tag) + ".csv"), index=False)
+    coefficientsDf.to_csv(os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_imputedPCA.csv"), index=False)
 
 
-def analyzeCorrelationsNonlinear():
+def analyzeCorrelationsNonlinearPCA():
     numRepeats = 10
 
-    tags = ["raw","imputed"]
-
-    for tag in tags:
-        dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
-        df = pd.read_csv(dataFilePath)
-        nonlinearAnalysis(df, tag, numRepeats)
+    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedPCA.csv")
+    df = pd.read_csv(dataFilePath)
+    nonlinearAnalysis(df, numRepeats)
 

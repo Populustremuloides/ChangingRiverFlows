@@ -6,7 +6,6 @@ import cartopy.feature as cfeature
 import pandas as pd
 from colorCatchments import *
 from tqdm import tqdm
-df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata.csv"))
 
 
 seismic = mpl.cm.get_cmap('seismic')
@@ -53,7 +52,7 @@ varToTitleS = {
         }
 
 
-def plotVar(var, m):
+def plotVar(var, m, df):
     # width, height
     fig = plt.figure(figsize=(11 * 2, 6 * 1.5))
 
@@ -69,7 +68,11 @@ def plotVar(var, m):
     plt.close()
 
 
-def mapAll():
+def mapAll(tag):
+
+    dfPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
+    if os.path.exists(dfPath):
+        df = pd.read_csv(dfPath)
 
     loop = tqdm(total=12)
     loop.set_description("mapping catchments")
@@ -77,83 +80,83 @@ def mapAll():
 
     # runoff ratio
 
-    m = getM_d_pMean(cmap)
-    plotVar("d_pMean", m)
-    colorbar_d_pMean(cmap)
-    colorbar_d_pMean(cmap, pLeft=True)
+    m = getM_d_pMean(cmap, df)
+    plotVar("d_pMean", m, df)
+    colorbar_d_pMean(cmap, df)
+    colorbar_d_pMean(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_d_pSlope(cmap)
-    plotVar("d_pSlope", m)
-    colorbar_d_pSlope(cmap)
-    colorbar_d_pSlope(cmap, pLeft=True)
+    m = getM_d_pSlope(cmap, df)
+    plotVar("d_pSlope", m, df)
+    colorbar_d_pSlope(cmap, df)
+    colorbar_d_pSlope(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_d_pPercentChange(cmap)
-    plotVar("d_pPercentChange", m)
-    colorbar_d_pPercentChange(cmap)
-    colorbar_d_pPercentChange(cmap, pLeft=True)
+    m = getM_d_pPercentChange(cmap, df)
+    plotVar("d_pPercentChange", m, df)
+    colorbar_d_pPercentChange(cmap, df)
+    colorbar_d_pPercentChange(cmap, df, pLeft=True)
     loop.update(1)
 
     # mean annual specific discharge
 
-    m = getM_masdMean(cmap)
-    plotVar("masdMean", m)
-    colorbar_masdMean(cmap)
-    colorbar_masdMean(cmap, pLeft=True)
+    m = getM_masdMean(cmap, df)
+    plotVar("masdMean", m, df)
+    colorbar_masdMean(cmap, df)
+    colorbar_masdMean(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_masdSlope(cmap)
-    plotVar("masdSlope", m)
-    colorbar_masdSlope(cmap)
-    colorbar_masdSlope(cmap, pLeft=True)
+    m = getM_masdSlope(cmap, df)
+    plotVar("masdSlope", m, df)
+    colorbar_masdSlope(cmap, df)
+    colorbar_masdSlope(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_masdPercentChange(cmap)
-    plotVar("masdPercentChange", m)
-    colorbar_masdPercentChange(cmap)
-    colorbar_masdPercentChange(cmap, pLeft=True)
+    m = getM_masdPercentChange(cmap, df)
+    plotVar("masdPercentChange", m, df)
+    colorbar_masdPercentChange(cmap, df)
+    colorbar_masdPercentChange(cmap, df, pLeft=True)
     loop.update(1)
 
     # period of mean flow
 
-    m = getM_pommfMean(cmap)
-    plotVar("pommfMean", m)
-    colorbar_pommfMean(cmap)
-    colorbar_pommfMean(cmap, pLeft=True)
+    m = getM_pommfMean(cmap, df)
+    plotVar("pommfMean", m, df)
+    colorbar_pommfMean(cmap, df)
+    colorbar_pommfMean(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_pommfSlope(cmap)
-    plotVar("pommfSlope", m)
-    colorbar_pommfSlope(cmap)
-    colorbar_pommfSlope(cmap, pLeft=True)
+    m = getM_pommfSlope(cmap, df)
+    plotVar("pommfSlope", m, df)
+    colorbar_pommfSlope(cmap, df)
+    colorbar_pommfSlope(cmap, df, pLeft=True)
     loop.update(1)
 
     # day of mean flow
 
-    m = getM_domfMean(cmap)
-    plotVar("domfMean", m)
-    colorbar_domfMean(cmap)
-    colorbar_domfMean(cmap, pLeft=True)
+    m = getM_domfMean(cmap, df)
+    plotVar("domfMean", m, df)
+    colorbar_domfMean(cmap, df)
+    colorbar_domfMean(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_domfSlope(cmap)
-    plotVar("domfSlope", m)
-    colorbar_domfSlope(cmap)
-    colorbar_domfSlope(cmap, pLeft=True)
+    m = getM_domfSlope(cmap, df)
+    plotVar("domfSlope", m, df)
+    colorbar_domfSlope(cmap, df)
+    colorbar_domfSlope(cmap, df, pLeft=True)
     loop.update(1)
 
     # day of peak flow
 
-    m = getM_dopfMean(cmap)
-    plotVar("dopfMean", m)
-    colorbar_dopfMean(cmap)
-    colorbar_dopfMean(cmap, pLeft=True)
+    m = getM_dopfMean(cmap, df)
+    plotVar("dopfMean", m, df)
+    colorbar_dopfMean(cmap, df)
+    colorbar_dopfMean(cmap, df, pLeft=True)
     loop.update(1)
 
-    m = getM_dopfSlope(cmap)
-    plotVar("dopfSlope", m)
-    colorbar_dopfSlope(cmap)
-    colorbar_dopfSlope(cmap, pLeft=True)
+    m = getM_dopfSlope(cmap, df)
+    plotVar("dopfSlope", m, df)
+    colorbar_dopfSlope(cmap, df)
+    colorbar_dopfSlope(cmap, df, pLeft=True)
     loop.update(1)
 

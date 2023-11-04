@@ -10,16 +10,20 @@ import numpy as np
 import copy
 from sklearn.linear_model import LinearRegression
 
-def getDroppers(df):
+def getDroppers(df, tag):
     droppers = []
     keepers = []
-    for col in df.columns:
-        proportionNan =  float(np.sum(df[col].isna())) / float(len(df[col]))
-        if proportionNan > 0.1:
-            droppers.append(col)
-            print("dropping", col, "for linear regression analysis because of sparsity.")
-        else:
-            keepers.append(col)
+
+    with open(os.path.join(logPath, "log_analysis_linearCorelations_" + str(tag) + ".txt"), "w+") as logFile:
+        logFile.writelines("The following columns were dropped from the analysis because they had > 0.1 proportion nan values:\n")
+        for col in df.columns:
+            proportionNan =  float(np.sum(df[col].isna())) / float(len(df[col]))
+            if proportionNan > 0.1:
+                droppers.append(col)
+                print("dropping", col, "for linear regression analysis because of sparsity.")
+                logFile.writelines(col + "\n")
+            else:
+                keepers.append(col)
     return droppers, keepers
 
 def getTrainMask(df):
@@ -33,18 +37,13 @@ def getTrainMask(df):
     mask = np.array(([False] * numTest) + ([True] * numTrain))
     return mask
 
-# cycle through the data and calculate the runoff ratios
-def analyzeCorrelationsLinear():
-    numRepeats = 10
-
-    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata.csv")
-    df = pd.read_csv(dataFilePath)
-
+def linearAnalysis(df, tag, numRepeats):
     predictableVars = list(predictablesToPretty.keys())
     predictorVars = list(predictorsToPretty.keys())
 
     predictorsDf = df[predictorVars]
-    droppers, keepers  = getDroppers(predictorsDf)
+    print("dropping columns for " + tag + " analysis")
+    droppers, keepers  = getDroppers(predictorsDf, tag)
 
     # prepare to save the data
     dataDict = {"target":[],"score":[]}
@@ -98,4 +97,18 @@ def analyzeCorrelationsLinear():
     loop.close()
 
     coefficientsDf = pd.DataFrame.from_dict(dataDict)
-    coefficientsDf.to_csv(os.path.join(outputFilesPath, "regressionCoefficientsLinear.csv"), index=False)
+    coefficientsDf.to_csv(os.path.join(outputFilesPath, "regressionCoefficientsLinear_" + str(tag) + ".csv"), index=False)
+
+# cycle through the data and calculate the runoff ratios
+def analyzeCorrelationsLinear():
+    numRepeats = 10
+
+    tags = ["raw","imputed"]
+
+    for tag in tags:
+        dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
+        df = pd.read_csv(dataFilePath)
+        linearAnalysis(df, tag, numRepeats)
+
+
+

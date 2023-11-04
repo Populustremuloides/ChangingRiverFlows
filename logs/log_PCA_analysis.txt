@@ -1,0 +1,28 @@
+The following columns were dropped from the PCA analysis because they were ordinal values:
+River
+Station
+Country
+LINKNO
+Ecoregion_Name
+Continent
+BIOME
+ECO_NAME
+quality
+
+
+proportion variance explained of kept features: 0.7908458678382745
+proportion variance explained of individual features:
+feature 0.19696926646082885
+feature 0.15507799411862236
+feature 0.1265514785454347
+feature 0.0633226230541465
+feature 0.045841879010210286
+feature 0.03970939390157287
+feature 0.029989913446539767
+feature 0.0272903166276259
+feature 0.021398104412522424
+feature 0.020196893232236956
+feature 0.018610596633224043
+feature 0.016686319930432028
+feature 0.014786759154080002
+feature 0.01441432931079775

@@ -87,6 +87,7 @@ def addLocalWaterYear():
     if not os.path.exists(augmentedTimeseriesPath):
         os.mkdir(augmentedTimeseriesPath)
 
+    numKept = 0
     numCats = len(os.listdir(pureSeriesPath))
     loop = tqdm(total=numCats)
     for file in os.listdir(pureSeriesPath):
@@ -97,9 +98,13 @@ def addLocalWaterYear():
 
         if len(np.unique(df[waterYearVar])) > g_numYearsToUseForAnalysis:
             # save to new location
-            df.to_csv(os.path.join(augmentedTimeseriesPath, file))
+            df = df.drop(datesVar, axis=1)
+            df.to_csv(os.path.join(augmentedTimeseriesPath, file), index=False)
+            numKept += 1
 
         loop.set_description("Computing local water years")
         loop.update(1)
 
+    with open(os.path.join(logPath, "log_localWaterYearLog.txt"), "w+") as logFile:
+        logFile.writelines("There were a total of " + str(numCats) + " possible catchments, " + str(numKept) + " of which were kept for further analysis because they had sufficient length.")
     loop.close()

@@ -19,8 +19,10 @@ def analyzePOMM():
         dataFilePath = os.path.join(augmentedTimeseriesPath, file)
         df = pd.read_csv(dataFilePath)
 
+        print(file)
         cat = u_getCatchmentName(file)
-
+        print(cat)
+        quit()
         waterYears = np.unique(df[waterYearVar])
 
         # loop through every water year and calculate the period of mean mangitude

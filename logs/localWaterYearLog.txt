@@ -1,0 +1,1 @@
+There were a total of 14 possible catchments, 10 of which were kept for further analysis because they had sufficient length.

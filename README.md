@@ -4,6 +4,8 @@ This is a python module for running code to analzye recent changes in global riv
 
 The entire analysis can be completed by running the ```main.py``` file.
 
+Recomended to run with a conda environment with the following packages:
 
+- 
 
 

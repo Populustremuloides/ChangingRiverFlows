@@ -6,10 +6,10 @@ import matplotlib.pyplot as plt
 import copy
 import numpy as np
 
-def modelScoresFigure(tag):
+def modelScoresFigure():
 
-    linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_" + str(tag) + ".csv")
-    nonlinearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_" + str(tag) + ".csv")
+    linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_imputedPCA.csv")
+    nonlinearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_imputedPCA.csv")
 
     linearDf = pd.read_csv(linearDataPath)
     nonlinearDf = pd.read_csv(nonlinearDataPath)
@@ -40,7 +40,7 @@ def modelScoresFigure(tag):
     plt.title("Linear Model Skill Levels")
     plt.ylabel("coefficient of determination")
     plt.xticks(rotation=0)
-    plt.savefig(os.path.join(figurePath, "regressionScores_" + str(tag) + ".png"))#"linearRegressionScores.png"))
+    plt.savefig(os.path.join(figurePath, "regressionScores_imputedPCA.png"))#"linearRegressionScores.png"))
     plt.clf()
 
     #fig, ax = plt.subplots(figsize=(11, 5))
@@ -56,7 +56,7 @@ def groupColumns(df):
 
     groups = []
     for val in df.index:
-        groups.append(predictorsToCategory[val])
+        groups.append(predictorsToCategoryPCA[val])
     df["group"]  = groups
     df = df.groupby("group").sum()
     df = 100 * df / df.sum()
@@ -64,8 +64,8 @@ def groupColumns(df):
 
     return df
 
-def barChartLinear(tag):
-    linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_" + str(tag) + ".csv")
+def barChartLinear():
+    linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_imputedPCA.csv")
 
     linearDf = pd.read_csv(linearDataPath)
 
@@ -79,7 +79,7 @@ def barChartLinear(tag):
     linearDf["target"] = newTargets
 
     linearDf = linearDf.groupby("target").mean()
-    linearDf.to_csv(os.path.join(outputFilesPath, "feature_importances_linear_" + str(tag) + ".csv"), index=False) # save the results
+    linearDf.to_csv(os.path.join(outputFilesPath, "feature_importances_linear_imputedPCA.csv"), index=False) # save the results
 
     linearDf = linearDf.dropna(axis=1)
     linearDf = groupColumns(linearDf)
@@ -91,11 +91,11 @@ def barChartLinear(tag):
     plt.title("Contributions of Features to Linear Model Decision Making")
     plt.ylim(-2,102)
     plt.tight_layout()
-    plt.savefig(os.path.join(figurePath, "modelFeatureImportancesLinear_" + str(tag) + ".png"))
+    plt.savefig(os.path.join(figurePath, "modelFeatureImportancesLinear_imputedPCA.png"))
     plt.clf()
 
-def barChartNonlinear(tag):
-    nonlinearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_" + str(tag) + ".csv")
+def barChartNonlinear():
+    nonlinearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsNonlinear_ImputedPCA.csv")
 
     nonlinearDf = pd.read_csv(nonlinearDataPath)
 
@@ -110,7 +110,7 @@ def barChartNonlinear(tag):
 
     nonlinearDf = nonlinearDf.groupby("target").mean()
 
-    nonlinearDf.to_csv(os.path.join(outputFilesPath, "feature_importances_nonlinear_" + str(tag) + ".csv"), index=False) # save the results
+    nonlinearDf.to_csv(os.path.join(outputFilesPath, "feature_importances_nonlinear_imputedPCA.csv"), index=False) # save the results
 
     nonlinearDf = nonlinearDf.dropna(axis=1)
     nonlinearDf = groupColumns(nonlinearDf)
@@ -122,18 +122,16 @@ def barChartNonlinear(tag):
     plt.title("Contributions of Features to Random Forest Model Decision Making")
     plt.ylim(-2,102)
     plt.tight_layout()
-    plt.savefig(os.path.join(figurePath, "modelFeatureImportancesNonlinear_" + str(tag) + ".png"))
+    plt.savefig(os.path.join(figurePath, "modelFeatureImportancesNonlinear_imputedPCA.png"))
     plt.clf()
 
 
 
-def analyzeCorrelationsFigure():
-    tags = ["raw","imputed"]
+def analyzeCorrelationsFigurePCA():
 
-    for tag in tags:
-        modelScoresFigure(tag)
-        barChartLinear(tag)
-        barChartNonlinear(tag)
+    modelScoresFigure()
+    barChartLinear()
+    barChartNonlinear()
 
 
 
