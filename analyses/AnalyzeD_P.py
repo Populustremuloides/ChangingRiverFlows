@@ -33,7 +33,7 @@ def analyzeD_P():
         dataDict["catchment"].append(cat)
         dataDict["d_pSlope"].append(slope)
         dataDict["d_pMean"].append(mean)
-        dataDict["d_pPercentChange"].append(slope / mean)
+        dataDict["d_pPercentChange"].append(100 * (slope / mean))
 
         loop.set_description("Computing discharge / precip ratios")
         loop.update(1)

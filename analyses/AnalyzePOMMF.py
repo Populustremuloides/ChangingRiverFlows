@@ -33,11 +33,12 @@ def analyzePOMMF():
 
         slope = u_regressionFunction(waterYears, pommfs)
         mean = np.mean(pommfs)
-
-        # store the newly harvested data
-        dataDict["catchment"].append(cat)
-        dataDict["pommfSlope"].append(slope)
-        dataDict["pommfMean"].append(mean)
+        
+        if not pd.isna(mean):
+            # store the newly harvested data
+            dataDict["catchment"].append(cat)
+            dataDict["pommfSlope"].append(slope)
+            dataDict["pommfMean"].append(mean)
 
         loop.set_description("Computing periods of mean mangitude for flow")
         loop.update(1)

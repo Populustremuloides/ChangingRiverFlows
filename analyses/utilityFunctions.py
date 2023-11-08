@@ -6,7 +6,7 @@ from scipy.signal import blackman
 # utility functions start with u_*
 
 def u_regressionFunction(x, y):
-    res = theilslopes(x, y)
+    res = theilslopes(y, x=x)
     return res[0]
 
 #u_regressionFunction = theilslopes
@@ -18,7 +18,7 @@ def u_getCatchmentName(fileName):
 
 def u_getDayOfMeanMagnitude(timeseries):
     dayInWaterYear = np.arange(timeseries.shape[0])
-    dayOfMeanMagnitude = np.sum(dayInWaterYear * timeseries) / timeseries.shape[0]
+    dayOfMeanMagnitude = np.sum(dayInWaterYear * timeseries) / np.sum(timeseries) #timeseries.shape[0]
     return dayOfMeanMagnitude
 
 def u_getPeriodOfMeanMagnitude(timeseries):
@@ -35,6 +35,6 @@ def u_getPeriodOfMeanMagnitude(timeseries):
 
     magnitudes = magnitudes[1:] # ignore the infinite time horizon element
 
-    periodOfMeanMagnitude = np.sum(periods * magnitudes) / periods.shape[0]
+    periodOfMeanMagnitude = np.sum(periods * magnitudes) / np.sum(magnitudes) #periods.shape[0]
 
     return periodOfMeanMagnitude

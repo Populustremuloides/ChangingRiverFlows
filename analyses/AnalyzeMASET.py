@@ -35,7 +35,7 @@ def analyzeMASET():
         dataDict["catchment"].append(cat)
         dataDict["masetSlope"].append(slope)
         dataDict["masetMean"].append(mean)
-        dataDict["masetPercentChange"].append(slope / mean)
+        dataDict["masetPercentChange"].append(100 * (slope / mean))
 
         loop.set_description("Computing mean annual specific evapotranspiration")
         loop.update(1)

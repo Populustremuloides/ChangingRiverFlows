@@ -4,6 +4,9 @@ data/fakeData
 data/metadata.py
 data/PureSeries
 data/makeFakeData.py
+data/filledFinalSeries_LitersPerDayPerSqKm/*.csv
+data/FilledFinalSeries_LitersPerDay/*.csv
+*~
 analyses/__pycache__/*.pyc
 data/__pycache__/*.pyc
 ]

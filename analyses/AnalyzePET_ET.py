@@ -32,7 +32,7 @@ def analyzePET_ET():
         dataDict["catchment"].append(cat)
         dataDict["pet_etSlope"].append(slope)
         dataDict["pet_etMean"].append(mean)
-        dataDict["pet_etPercentChange"].append(slope / mean)
+        dataDict["pet_etPercentChange"].append(100 * (slope / mean))
 
         loop.set_description("Computing P / PET ratios")
         loop.update(1)

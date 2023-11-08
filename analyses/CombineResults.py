@@ -20,17 +20,7 @@ def combineResults():
     df = df.rename({"Catchment ID":"catchment"}, axis=1)
     df = df.drop("Unnamed: 0", axis=1)
 
-    imputedDataPath = os.path.join(outputFilesPath, "imputedMetadata.csv")
-    imputedDf = pd.read_csv(imputedDataPath)
-    imputedDf = imputedDf.rename({"Catchment ID":"catchment"}, axis=1)
-
-    imputedPCADataPath = os.path.join(outputFilesPath, "imputedMetadataPCA.csv")
-    imputedPCADf = pd.read_csv(imputedPCADataPath)
-    imputedPCADf = imputedPCADf.rename({"Catchment ID":"catchment"}, axis=1)
-
     _combine(df, tag="raw")
-    _combine(imputedDf, tag="imputed")
-    _combine(imputedPCADf, tag="imputedPCA")
 
     print("timeseries summaries successfully combined with metadata")
 

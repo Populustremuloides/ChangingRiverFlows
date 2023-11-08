@@ -35,7 +35,7 @@ def analyzeMASP():
         dataDict["catchment"].append(cat)
         dataDict["maspSlope"].append(slope)
         dataDict["maspMean"].append(mean)
-        dataDict["maspPercentChange"].append(slope / mean)
+        dataDict["maspPercentChange"].append(100 * (slope / mean))
 
         loop.set_description("Computing mean annual specific precipitation")
         loop.update(1)

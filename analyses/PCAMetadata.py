@@ -3,18 +3,23 @@ from data.metadata import *
 import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
+import copy
 
 def pcaMetadata():
-    path = os.path.join(outputFilesPath, "imputedMetadata.csv")
+
+
+    path = os.path.join(outputFilesPath,"combinedTimeseriesSummariesAndMetadata_imputed.csv")
     df = pd.read_csv(path)
 
-    catchments = np.array(df["Catchment ID"])
+    catchments = np.array(df["catchment"])
+    predictablesDf = copy.copy(df[list(predictablesToPretty.keys()) + ["catchment"]])
 
     # remove ordinal variables
-    droppers = ["River", "Station", "Country","LINKNO","Ecoregion_Name","Continent","BIOME","ECO_NAME", "quality"]
-    df = df.drop(droppers + ["Catchment ID"], axis=1)
+    droppers = ["River", "Station", "ID", "FEOW_ID", "Country","LINKNO","Ecoregion_Name","Continent","BIOME","ECO_NAME", "quality"]
+    df = df.drop(droppers + ["catchment"], axis=1)
+    df = df.drop(list(predictablesToPretty.keys()), axis=1)
     cols = df.columns
-
+    
     # normalize
     df = df - df.mean()
     df = df / df.std()
@@ -35,27 +40,29 @@ def pcaMetadata():
     plt.savefig(os.path.join(figurePath, "pca_components.png"))
     plt.clf()
 
-    numToKeep = 14 # number of principal components to keep, an admittedly arbitrary number
-    outDf = pd.DataFrame(transformedData[:,:numToKeep], columns=np.arange(numToKeep) + 1)
-    outDf["Catchment ID"] = catchments
 
+    outDf = pd.DataFrame(transformedData[:,:g_numPCAVarsToKeep], columns=np.arange(g_numPCAVarsToKeep) + 1)
+    outDf["catchment"] = catchments # add back in the features that will be predicted later on
+    outDf = predictablesDf.merge(outDf, on="catchment")
+    print(outDf)
+    
     # log what we did
     with open(os.path.join(logPath, "log_PCA_analysis.txt"), "w+") as logFile:
         logFile.writelines("The following columns were dropped from the PCA analysis because they were ordinal values:\n")
         for dropped in droppers:
             logFile.writelines(dropped + "\n")
         logFile.writelines("\n\n")
-        logFile.writelines("proportion variance explained of kept features: " + str(np.sum(model.explained_variance_ratio_[:numToKeep])) + "\n")
+        logFile.writelines("proportion variance explained of kept features: " + str(np.sum(model.explained_variance_ratio_[:g_numPCAVarsToKeep])) + "\n")
         logFile.writelines("proportion variance explained of individual features:\n")
-        for i, pve in enumerate(model.explained_variance_ratio_[:numToKeep]):
+        for i, pve in enumerate(model.explained_variance_ratio_[:g_numPCAVarsToKeep]):
             logFile.writelines("feature " + str(pve) + "\n")
-
+    
     # save the transformed data
-    path = os.path.join(outputFilesPath, "imputedMetadataPCA.csv")
+    path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedPCA.csv")
     outDf.to_csv(path, index=False)
 
     # save the feature weights for each component
-    for i in np.arange(numToKeep):
+    for i in np.arange(g_numPCAVarsToKeep):
         weights = model.components_[i]
         indices = np.flip(np.argsort(np.abs(weights)))
         weightsDf = pd.DataFrame.from_dict({"weights":weights[indices],"labels":cols[indices]})

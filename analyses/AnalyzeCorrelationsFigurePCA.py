@@ -37,7 +37,8 @@ def modelScoresFigure():
     sns.set_style("whitegrid")
     fig, ax = plt.subplots(figsize=(11, 5))
     sns.violinplot(ax=ax, data=scoreDf, x="target",y="score", hue="type")
-    plt.title("Linear Model Skill Levels")
+    plt.ylim(-1.1, 1.1)
+    plt.title("Model Skill Levels")
     plt.ylabel("coefficient of determination")
     plt.xticks(rotation=0)
     plt.savefig(os.path.join(figurePath, "regressionScores_imputedPCA.png"))#"linearRegressionScores.png"))
@@ -56,21 +57,28 @@ def groupColumns(df):
 
     groups = []
     for val in df.index:
-        groups.append(predictorsToCategoryPCA[val])
+        if val == "score":
+            groups.append("score")
+        else:
+            groups.append(predictorsToCategoryPCA[val])
     df["group"]  = groups
     df = df.groupby("group").sum()
-    df = 100 * df / df.sum()
+    scoreMask = df.index == "score"
+    scores = 100 * np.array(df[scoreMask])
+    df = df[~scoreMask]
+    df = (scores * df) / df.sum() # normalize to sum to 100 * coefficient of determination
     df = df.transpose()
 
     return df
 
 def barChartLinear():
     linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_imputedPCA.csv")
+    linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_imputedPCA.csv")
 
     linearDf = pd.read_csv(linearDataPath)
 
-    linearDf = linearDf.drop("score", axis=1)
-    for col in linearDf.columns[1:]:
+    #linearDf = linearDf.drop("score", axis=1)
+    for col in linearDf.columns[2:]:
         linearDf[col] = linearDf[col].abs()
 
     newTargets = []
@@ -83,13 +91,14 @@ def barChartLinear():
 
     linearDf = linearDf.dropna(axis=1)
     linearDf = groupColumns(linearDf)
-    ax = linearDf.plot(kind="bar",stacked=True, figsize=(12.5,5), edgecolor="black")
+    ax = linearDf.plot(kind="bar",stacked=True, figsize=(15.5,5), edgecolor="black")
     plt.ylabel("% contribution")
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], title="feature category", loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Linear Model Decision Making")
-    plt.ylim(-2,102)
+    plt.xlabel("")
+    plt.ylim(-2,np.max(linearDf.transpose().sum()) + 2)
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesLinear_imputedPCA.png"))
     plt.clf()
@@ -99,8 +108,8 @@ def barChartNonlinear():
 
     nonlinearDf = pd.read_csv(nonlinearDataPath)
 
-    nonlinearDf = nonlinearDf.drop("score", axis=1)
-    for col in nonlinearDf.columns[1:]:
+    #nonlinearDf = nonlinearDf.drop("score", axis=1)
+    for col in nonlinearDf.columns[2:]:
         nonlinearDf[col] = nonlinearDf[col].abs()
 
     newTargets = []
@@ -114,13 +123,14 @@ def barChartNonlinear():
 
     nonlinearDf = nonlinearDf.dropna(axis=1)
     nonlinearDf = groupColumns(nonlinearDf)
-    ax = nonlinearDf.plot(kind="bar",stacked=True, figsize=(12.5,5), edgecolor="black")
+    ax = nonlinearDf.plot(kind="bar",stacked=True, figsize=(15.5,5), edgecolor="black")
     plt.ylabel("% contribution")
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], title="feature category", loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Random Forest Model Decision Making")
-    plt.ylim(-2,102)
+    plt.xlabel("")
+    plt.ylim(-2,np.max(nonlinearDf.transpose().sum()) + 2)
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesNonlinear_imputedPCA.png"))
     plt.clf()

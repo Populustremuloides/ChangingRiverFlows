@@ -32,7 +32,7 @@ def analyzeET_P():
         dataDict["catchment"].append(cat)
         dataDict["et_pSlope"].append(slope)
         dataDict["et_pMean"].append(mean)
-        dataDict["et_pPercentChange"].append(slope / mean)
+        dataDict["et_pPercentChange"].append(100 * (slope / mean))
 
         loop.set_description("Computing ET / P ratios")
         loop.update(1)

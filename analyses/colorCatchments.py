@@ -82,11 +82,11 @@ def _printTruncation(var, lowerBound, upperBound, df, transform=None):
         numTruncated = np.sum(df[var] < lowerBound) + np.sum(df[var] > upperBound)
 
     with open(logPath, "a+") as logFile:
-        logFile.writelines("*******************")
-        logFile.writelines("number truncated for " + var + " " + str(numTruncated))
-        logFile.writelines("")
-        logFile.writelines(" = " + str(100 * (numTruncated / np.sum(~df[var].isna()))) + " % of the data")
-        logFile.writelines("*******************")
+        logFile.writelines("*******************\n")
+        logFile.writelines("number truncated for " + var + " " + str(numTruncated) + "\n")
+        logFile.writelines("\n")
+        logFile.writelines(" = " + str(100 * (numTruncated / np.sum(~df[var].isna()))) + " % of the data\n")
+        logFile.writelines("*******************\n\n")
 
 # *********************************************************************************
 # log mean annual precipitation
@@ -212,16 +212,20 @@ def colorbar_gord(cmap, df, pLeft=False):
 # *********************************************************************************
 # mean annual specific discharge - mean
 # *********************************************************************************
-#plt.hist(df["masdMean"])
-#plt.clf()
+
 
 def getNorm_masdMean(df, printTruncation=True):
+    #plt.hist(df["masdMean"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "masdMean"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = 0 
+    upperBound = 5e6
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
         _printTruncation(var, lowerBound, upperBound, df)
+
     return norm
 
 def getM_masdMean(cmap, df):
@@ -257,13 +261,16 @@ def colorbar_masdMean(cmap, df, pLeft=False):
 # *********************************************************************************
 # mean annual specific discharge - slope
 # *********************************************************************************
-#plt.hist(df["masdSlope"])
-#plt.clf()
+
 
 def getNorm_masdSlope(df, printTruncation=True):
+    #plt.hist(df["masdSlope"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "masdSlope"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -1e5 # FIXME: change
+    upperBound = 1e5 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
         _printTruncation(var, lowerBound, upperBound, df)
@@ -303,13 +310,16 @@ def colorbar_masdSlope(cmap, df, pLeft=False):
 # *********************************************************************************
 # mean annual specific discharge - slope normalized
 # *********************************************************************************
-#plt.hist(df["masdPercentChange"])
-#plt.clf()
+
 
 def getNorm_masdPercentChange(df, printTruncation=True):
+    #plt.hist(df["masdPercentChange"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "masdPercentChange"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -12
+    upperBound = 12
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
         _printTruncation(var, lowerBound, upperBound, df)
@@ -349,12 +359,19 @@ def colorbar_masdPercentChange(cmap, df, pLeft=False):
 # *********************************************************************************
 # day of mean flow - mean
 # *********************************************************************************
-#plt.hist(df["domfMean"])
-#plt.clf()
 
-def getNorm_domfMean(df):
-    domf_means = df["domfMean"]
-    norm = mpl.colors.Normalize(vmin=np.min(domf_means), vmax=np.max(domf_means))
+def getNorm_domfMean(df, printTruncation=True):
+    #plt.hist(df["domfMean"], bins=20)
+    #plt.show()
+    #quit()
+
+    var = "domfMean"
+    lowerBound = 110#np.mean(df[var])
+    upperBound = 260#np.mean(df[var])
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
     return norm
 
 def getM_domfMean(cmap, df):
@@ -390,16 +407,19 @@ def colorbar_domfMean(cmap, df, pLeft=False):
 # *********************************************************************************
 # day of mean flow - slope
 # *********************************************************************************
-#plt.hist(df["domfSlope"])
-#plt.clf()
+
 
 def getNorm_domfSlope(df, printTruncation=True):
+    #plt.hist(df["domfSlope"], bins=20)
+    #plt.show()
+    #quit()    
+
     var = "domfSlope"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -9
+    upperBound = 9
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound, df)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
@@ -438,9 +458,18 @@ def colorbar_domfSlope(cmap, df, pLeft=False):
 #plt.hist(df["dopfMean"])
 #plt.clf()
 
-def getNorm_dopfMean(df):
-    domf_means = df["dopfMean"]
-    norm = mpl.colors.Normalize(vmin=np.min(domf_means), vmax=np.max(domf_means))
+def getNorm_dopfMean(df, printTruncation=True):
+    #plt.hist(df["dopfMean"], bins=20)
+    #plt.show()
+    #quit()
+
+    var = "dopfMean"
+    lowerBound = 100#np.min(df[var])
+    upperBound = 300 #np.max(df[var])
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
     return norm
 
 def getM_dopfMean(cmap, df):
@@ -476,16 +505,18 @@ def colorbar_dopfMean(cmap, df, pLeft=False):
 # *********************************************************************************
 # day of peak flow - slope
 # *********************************************************************************
-#plt.hist(df["dopfSlope"])
-#plt.clf()
 
 def getNorm_dopfSlope(df, printTruncation=True):
+    #plt.hist(df["dopfSlope"])
+    #plt.show()
+    #quit()
+
     var = "dopfSlope"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -20 # FIXME: change
+    upperBound = 20 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound, df)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
@@ -523,13 +554,14 @@ def colorbar_dopfSlope(cmap, df, pLeft=False):
 # *********************************************************************************
 # period of mean flow - mean
 # *********************************************************************************
-#plt.hist(df["pommfMean"])
-#plt.clf()
-
 def getNorm_pommfMean(df, printTruncation=True):
+    #plt.hist(df["pommfMean"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "pommfMean"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = 20 # FIXME: change
+    upperBound = 300 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
         _printTruncation(var, lowerBound, upperBound, df)
@@ -568,16 +600,17 @@ def colorbar_pommfMean(cmap, df, pLeft=False):
 # *********************************************************************************
 # period of mean flow - slope
 # *********************************************************************************
-#plt.hist(df["pommfSlope"])
-#plt.clf()
-
 def getNorm_pommfSlope(df, printTruncation=True):
+    #plt.hist(df["pommfSlope"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "pommfSlope"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -10 # FIXME: change
+    upperBound = 10 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound, df)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
@@ -615,16 +648,18 @@ def colorbar_pommfSlope(cmap, df, pLeft=False):
 # *********************************************************************************
 # runoff ratio - mean
 # *********************************************************************************
-#plt.hist(df["d_pMean"])
-#plt.clf()
 
 def getNorm_d_pMean(df, printTruncation=True):
+    #plt.hist(df["d_pMean"], bins=10)
+    #plt.show()
+    #quit()
+
     var = "d_pMean"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = 0 # FIXME: change
+    upperBound = 1.5 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound, df)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
@@ -661,16 +696,18 @@ def colorbar_d_pMean(cmap, df, pLeft=False):
 # *********************************************************************************
 # runoff ratio - slope
 # *********************************************************************************
-#plt.hist(df["d_Slope"])
-#plt.clf()
 
 def getNorm_d_pSlope(df, printTruncation=True):
+    #plt.hist(df["d_pSlope"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "d_pSlope"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -0.03 # FIXME: change
+    upperBound = 0.03 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound, df)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 
@@ -706,16 +743,18 @@ def colorbar_d_pSlope(cmap, df, pLeft=False):
 # *********************************************************************************
 # runoff ratio - percent change
 # *********************************************************************************
-#plt.hist(df["d_pPercentChange"])
-#plt.clf()
 
 def getNorm_d_pPercentChange(df, printTruncation=True):
+    #plt.hist(df["d_pPercentChange"], bins=20)
+    #plt.show()
+    #quit()
+
     var = "d_pPercentChange"
-    lowerBound = -1 # FIXME: change
-    upperBound = 1 # FIXME: change
+    lowerBound = -10 # FIXME: change
+    upperBound = 10 # FIXME: change
     norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
-       _printTruncation(var, lowerBound, upperBound, df)
+        _printTruncation(var, lowerBound, upperBound, df)
 
     return norm
 

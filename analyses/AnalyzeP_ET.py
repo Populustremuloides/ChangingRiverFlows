@@ -4,13 +4,13 @@ from data.metadata import *
 from analyses.utilityFunctions import *
 from tqdm import tqdm
 
-def analyzeP_PET():
+def analyzeP_ET():
     '''
     Calculates the ratio of the mean annual precipitation rate to the
-    potential evapotranpsiration rate for each catchment.
+    evapotranpsiration rate for each catchment.
     '''
 
-    dataDict = {"catchment":[],"p_petSlope":[],"p_petMean":[], "p_petPercentChange":[]}
+    dataDict = {"catchment":[],"p_etSlope":[],"p_etMean":[], "p_etPercentChange":[]}
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
@@ -22,24 +22,24 @@ def analyzeP_PET():
 
         df = df.groupby(waterYearVar).mean()
 
-        p_pets = df[precipVar] / df[petVar]
+        p_ets = df[precipVar] / df[etVar]
         waterYears = list(df.index)
 
-        slope = u_regressionFunction(waterYears, p_pets)
-        mean = np.mean(p_pets)
+        slope = u_regressionFunction(waterYears, p_ets)
+        mean = np.mean(p_ets)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
-        dataDict["p_petSlope"].append(slope)
-        dataDict["p_petMean"].append(mean)
-        dataDict["p_petPercentChange"].append(100 * (slope / mean))
+        dataDict["p_etSlope"].append(slope)
+        dataDict["p_etMean"].append(mean)
+        dataDict["p_etPercentChange"].append(100 * (slope / mean))
 
-        loop.set_description("Computing P / PET ratios")
+        loop.set_description("Computing P / ET ratios")
         loop.update(1)
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
-    outPath = os.path.join(outputFilesPath, "timeseriesSummary_p_pet.csv")
+    outPath = os.path.join(outputFilesPath, "timeseriesSummary_p_et.csv")
     outDf.to_csv(outPath, index=False)
 
     loop.close()

@@ -11,6 +11,8 @@ cls9
 cls10
 cls11
 cls12
+Dam_SurfaceArea
+Dam_Count
 MeanPopden_2000
 MeanPopden_2005
 MeanPopden_2010

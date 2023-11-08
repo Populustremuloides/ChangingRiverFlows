@@ -39,7 +39,7 @@ def getTrainMask(df):
 
 def linearAnalysis(df, numRepeats):
     predictableVars = list(predictablesToPretty.keys())
-    predictorVars = list(predictorsToPrettyPCA.keys())
+    predictorVars = [str(1 + x) for x in list(range(g_numPCAVarsToKeep))] #list(predictorsToPrettyPCA.keys())
 
     predictorsDf = df[predictorVars]
     droppers, keepers  = getDroppers(predictorsDf)

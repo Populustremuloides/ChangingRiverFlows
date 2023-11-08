@@ -6,7 +6,8 @@ np.random.seed(0)
 # stored variable names for accessing the raw data
 
 # global variables are labeled with g_*
-g_numYearsToUseForAnalysis = 9
+g_numYearsToUseForAnalysis = 8
+g_numPCAVarsToKeep = 14 # number of principal components to keep, an admittedly arbitrary number
 
 waterYearVar = "localWaterYear"
 
@@ -45,12 +46,23 @@ litersPerDayPerSqKmPath = os.path.join(dataPath, "FilledFinalSeries_LitersPerDay
 
 # get the output
 outputPath = os.path.join(rootPath, "output")
+if not os.path.exists(outputPath):
+    os.mkdir(outputPath)
+
+
 
 # get the outputFiles
 outputFilesPath = os.path.join(outputPath, "outputFiles")
-augmentedTimeseriesPath = os.path.join(outputPath, "augmentedTimeseries")
-figurePath = os.path.join(outputPath, "figures")
+if not os.path.exists(outputFilesPath):
+    os.mkdir(outputFilesPath)
 
+augmentedTimeseriesPath = os.path.join(outputPath, "augmentedTimeseries")
+if not os.path.exists(augmentedTimeseriesPath):
+    os.mkdir(augmentedTimeseriesPath)
+
+figurePath = os.path.join(outputPath, "figures")
+if not os.path.exists(figurePath):
+    os.mkdir(figurePath)
 
 # make a log directory
 logPath = os.path.join(rootPath, "logs")
@@ -236,59 +248,59 @@ predictorsToPrettyPCA = {
 
 
 predictorsToCategory = {
-    "p_petSlope":"climate ratio",
-    "p_petPercentChange":"climate ratio",
-    "dompSlope":"precipitation",
-    "maspSlope":"precipitation",
-    "maspPercentChange":"precipitation",
-    "p_petMean":"climate ratio",
-    "maspMean":"precipitation",
-    "dompMean":"precipitation",
-    "pet_pSlope":"climate ratio",
-    "pet_pPercentChange":"climate ratio",
-    "doppetMean":"potential evapotranspiration",
-    "pet_etSlope":"climate ratio",
-    "pet_etPercentChange":"climate ratio",
-    "dompetSlope":"potential evapotranspiration",
-    "maspetSlope":"potential evapotranspiration",
-    "maspetPercentChange":"potential evapotranspiration",
+    "p_petSlope":"climate change",
+    "p_petPercentChange":"climate change",
+    "dompSlope":"climate change",
+    "maspSlope":"climate change",
+    "maspPercentChange":"climate change",
+    "p_petMean":"climate mean",
+    "maspMean":"climate mean",
+    "dompMean":"climate mean",
+    "pet_pSlope":"climate change",
+    "pet_pPercentChange":"climate change",
+    "doppetMean":"climate mean",
+    "pet_etSlope":"climate change",
+    "pet_etPercentChange":"climate change",
+    "dompetSlope":"climate change",
+    "maspetSlope":"climate change",
+    "maspetPercentChange":"climate change",
 
-    "et_pSlope":"climate ratio",
-    "et_pPercentChange":"climate ratio",
-    "dometSlope":"evapotranspiration",
-    "masetSlope":"evapotranspiration",
-    "masetPercentChange":"evapotranspiration",
-    "pet_pMean":"climate ratio",
-    "pet_etMean":"climate ratio",
-    "dompetMean":"potential evapotranspiration",
-    "maspetMean":"potential evapotranspiration",
+    "et_pSlope":"climate mean",
+    "et_pPercentChange":"climate change",
+    "dometSlope":"climate change",
+    "masetSlope":"climate change",
+    "masetPercentChange":"climate change",
+    "pet_pMean":"climate mean",
+    "pet_etMean":"climate mean",
+    "dompetMean":"climate mean",
+    "maspetMean":"climate mean",
     "d_pMean":"mean flow properties",
     "masdMean":"mean flow properties",
     "domfMean":"mean flow properties",
-    "et_pMean":"climate ratio",
-    "dometMean":"evapotranspiration",
-    "masetMean":"evapotranspiration",
+    "et_pMean":"climate mean",
+    "dometMean":"climate mean",
+    "masetMean":"climate mean",
     "dopfMean":"mean flow properties",
-    "doppMean":"precipitation",
-    "doptMean":"temperature",
+    "doppMean":"climate mean",
+    "doptMean":"climate mean",
     "pommfMean":"mean flow properties",
-    "pommpMean":"precipitation",
-    "pommtSlope":"temperature",
-    "doppetSlope":"potential evapotranspiration",
-    "matSlope":"temperature",
-    "domtSlope":"temperature",
-    "doppSlope":"precipitation",
-    "doptSlope":"temperature",
-    "pommpetSlope":"potential evapotranspiration",
-    "pommpSlope":"precipitation",
-    "pommpetMean":"potential evapotranspiration",
-    "dopetSlope":"evapotranspiration",
-    "matMean":"temperature",
-    "domtMean":"temperature",
-    "pommetMean":"evapotranspiration",
-    "dopetMean":"evapotranspiration",
-    "pommtMean":"temperature",
-    "pommetSlope":"evapotranspiration",
+    "pommpMean":"climate mean",
+    "pommtSlope":"climate change",
+    "doppetSlope":"climate change",
+    "matSlope":"climate change",
+    "domtSlope":"climate change",
+    "doppSlope":"climate change",
+    "doptSlope":"climate change",
+    "pommpetSlope":"climate change",
+    "pommpSlope":"climate change",
+    "pommpetMean":"climate mean",
+    "dopetSlope":"climate change",
+    "matMean":"climate mean",
+    "domtMean":"climate mean",
+    "pommetMean":"climate mean",
+    "dopetMean":"climate mean",
+    "pommtMean":"climate mean",
+    "pommetSlope":"climate change",
 
     "cls1":"land cover",
     "cls2":"land cover",
@@ -296,20 +308,20 @@ predictorsToCategory = {
     "cls4":"land cover",
     "cls5":"land cover",
     "cls6":"land cover",
-    "cls7":"direct human impact",
+    "cls7":"agriculture",
     "cls8":"land cover",
-    "cls9":"direct human impact",
+    "cls9":"population density",
     "cls10":"land cover",
     "cls11":"land cover",
     "cls12":"land cover",
 
     "Dam_SurfaceArea":"dams",
     "Dam_Count":"dams",
-    "MeanPopden_2000":"direct human impact",
-    "MeanPopden_2005":"direct human impact",
-    "MeanPopden_2010":"direct human impact",
-    "MeanPopden_2015":"direct human impact",
-    "MeanHumanFootprint":"direct human impact",
+    "MeanPopden_2000":"population density",
+    "MeanPopden_2005":"population density",
+    "MeanPopden_2010":"population density",
+    "MeanPopden_2015":"population density",
+    "MeanHumanFootprint":"population density",
 
     "gord":"size",
     "PathLength":"size",
@@ -326,72 +338,18 @@ predictorsToCategory = {
 }
 
 predictorsToCategoryPCA = {
-    "p_petSlope":"climate ratio",
-    "p_petPercentChange":"climate ratio",
-    "dompSlope":"precipitation",
-    "maspSlope":"precipitation",
-    "maspPercentChange":"precipitation",
-    "p_petMean":"climate ratio",
-    "maspMean":"precipitation",
-    "dompMean":"precipitation",
-    "pet_pSlope":"climate ratio",
-    "pet_pPercentChange":"climate ratio",
-    "doppetMean":"potential evapotranspiration",
-    "pet_etSlope":"climate ratio",
-    "pet_etPercentChange":"climate ratio",
-    "dompetSlope":"potential evapotranspiration",
-    "maspetSlope":"potential evapotranspiration",
-    "maspetPercentChange":"potential evapotranspiration",
-
-    "et_pSlope":"climate ratio",
-    "et_pPercentChange":"climate ratio",
-    "dometSlope":"evapotranspiration",
-    "masetSlope":"evapotranspiration",
-    "masetPercentChange":"evapotranspiration",
-    "pet_pMean":"climate ratio",
-    "pet_etMean":"climate ratio",
-    "dompetMean":"potential evapotranspiration",
-    "maspetMean":"potential evapotranspiration",
-    "d_pMean":"mean flow properties",
-    "masdMean":"mean flow properties",
-    "domfMean":"mean flow properties",
-    "et_pMean":"climate ratio",
-    "dometMean":"evapotranspiration",
-    "masetMean":"evapotranspiration",
-    "dopfMean":"mean flow properties",
-    "doppMean":"precipitation",
-    "doptMean":"temperature",
-    "pommfMean":"mean flow properties",
-    "pommpMean":"precipitation",
-    "pommtSlope":"temperature",
-    "doppetSlope":"potential evapotranspiration",
-    "matSlope":"temperature",
-    "domtSlope":"temperature",
-    "doppSlope":"precipitation",
-    "doptSlope":"temperature",
-    "pommpetSlope":"potential evapotranspiration",
-    "pommpSlope":"precipitation",
-    "pommpetMean":"potential evapotranspiration",
-    "dopetSlope":"evapotranspiration",
-    "matMean":"temperature",
-    "domtMean":"temperature",
-    "pommetMean":"evapotranspiration",
-    "dopetMean":"evapotranspiration",
-    "pommtMean":"temperature",
-    "pommetSlope":"evapotranspiration",
-
-    "1":"Low Winter Temperature",
-    "2":"Large Catchment Area and Dam Count",
-    "3":"High Precipitation",
-    "4":"Low Summer Temperature, Low Human Presence, Poor Soil Drainage",
-    "5":"High Agricultural Density, High Population Density, Low Forest Cover",
-    "6":"High Population Density, Low Agricutlural Density, High Forest Cover",
-    "7":"Wet Winters and Evergreen Needle Plants",
-    "8":"High Precipitation Seasonality",
-    "9":"Small, Cultivated or Inhabited Catchments with Wet Winters",
-    "10":"Wet Catchments with Few but Potential Large Dams or Lakes",
-    "11":"Small Catchments with High Lake and Dam Area",
-    "12":"Barren Shrubland or Snow, Higher Altitude, Steeper Catchments with Poor Draining Soil",
-    "13":"Barren, Snow, or Deciduous Cover with Well-draining Soil and Larger Catchment Area",
-    "14":"Small, Regularly Flooded Catchments with Few Dams, Evergreen Deciduous Trees, Poorly Draining Soil, and High Density"
+    "1":"High winter temperature, high winter precipitation",
+    "2":"Large catchment area, dam area, and dam count. Later seasonal precip. and (P)ET",
+    "3":"High precipitation, high P/PET ratio, large area",
+    "4":"Low summer remperature, low human presence, high altitude",
+    "5":"Large increases in P/(P)ET ratio, lower summer temperature",
+    "6":"Low forest cover, high human population, and high agricultural land cover",
+    "7":"increase in ET/PET ratio, high population density",
+    "8":"decrease in ET/PET ratio, high population density",
+    "9":"Little open water, little seasonal pattern to Precip. or (P)ET, late arrival of peak flows/precip.",
+    "10":"High PET/ET ratio, lots of open water, poorly draining soil, many large dams",
+    "11":"High human agriculture levels, seasonal precip., few dams and little forest cover",
+    "12":"Changes to later peak in precip. and ET levels, multiannual climate cycles, broadleaf evergreen trees",
+    "13":"Low potential evapotranspiration, deciduous broadleaf trees, poorly draining soil",
+    "14":"Large catchments with few dams"
 }

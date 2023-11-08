@@ -37,7 +37,8 @@ def modelScoresFigure(tag):
     sns.set_style("whitegrid")
     fig, ax = plt.subplots(figsize=(11, 5))
     sns.violinplot(ax=ax, data=scoreDf, x="target",y="score", hue="type")
-    plt.title("Linear Model Skill Levels")
+    plt.ylim(-1.1,1.1)
+    plt.title("Model Skill Levels")
     plt.ylabel("coefficient of determination")
     plt.xticks(rotation=0)
     plt.savefig(os.path.join(figurePath, "regressionScores_" + str(tag) + ".png"))#"linearRegressionScores.png"))
@@ -56,10 +57,17 @@ def groupColumns(df):
 
     groups = []
     for val in df.index:
-        groups.append(predictorsToCategory[val])
+        if val == "score":
+            groups.append("score")
+        else:
+            groups.append(predictorsToCategory[val])
     df["group"]  = groups
     df = df.groupby("group").sum()
-    df = 100 * df / df.sum()
+
+    scoreMask = df.index == "score"
+    scores = 100 * np.array(df[scoreMask])
+    df = df[~scoreMask]
+    df = (scores * df) / df.sum() # normalize to sum to 100 * coefficient of determination
     df = df.transpose()
 
     return df
@@ -69,8 +77,8 @@ def barChartLinear(tag):
 
     linearDf = pd.read_csv(linearDataPath)
 
-    linearDf = linearDf.drop("score", axis=1)
-    for col in linearDf.columns[1:]:
+    #linearDf = linearDf.drop("score", axis=1)
+    for col in linearDf.columns[2:]:
         linearDf[col] = linearDf[col].abs()
 
     newTargets = []
@@ -89,7 +97,8 @@ def barChartLinear(tag):
     plt.legend(handles[::-1], labels[::-1], title="feature category", loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Linear Model Decision Making")
-    plt.ylim(-2,102)
+    plt.ylim(-2,np.max(linearDf.transpose().sum()) + 2)    
+    plt.xlabel("")
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesLinear_" + str(tag) + ".png"))
     plt.clf()
@@ -99,8 +108,8 @@ def barChartNonlinear(tag):
 
     nonlinearDf = pd.read_csv(nonlinearDataPath)
 
-    nonlinearDf = nonlinearDf.drop("score", axis=1)
-    for col in nonlinearDf.columns[1:]:
+    #nonlinearDf = nonlinearDf.drop("score", axis=1)
+    for col in nonlinearDf.columns[2:]:
         nonlinearDf[col] = nonlinearDf[col].abs()
 
     newTargets = []
@@ -120,7 +129,8 @@ def barChartNonlinear(tag):
     plt.legend(handles[::-1], labels[::-1], title="feature category", loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Random Forest Model Decision Making")
-    plt.ylim(-2,102)
+    plt.ylim(-2,np.max(nonlinearDf.transpose().sum()) + 2)
+    plt.xlabel("")
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesNonlinear_" + str(tag) + ".png"))
     plt.clf()

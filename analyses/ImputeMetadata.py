@@ -17,19 +17,19 @@ def imputeMetadata():
     variables with each other
     '''
 
-    numIterations = 10#000
+    numIterations = 10000
 
     # read in the metadata file
-    df = pd.read_csv(metadataPath)
+    df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv"))
 
-    df = df.drop(df.columns[0], axis=1)
+    #df = df.drop(df.columns[0], axis=1)
 
     # identify the columns we want to use
     keeperCols = []
     for col in df.columns:
         try:
             float(df[col][1])
-            if col != "LINKNO" and col != "Catchment ID":
+            if col != "LINKNO" and col != "catchment" and col != "ID" and col != "FEOW_ID":
                 keeperCols.append(col)
         except:
             pass
@@ -37,7 +37,7 @@ def imputeMetadata():
 
     # identify missing data
     ddf = df[keeperCols]
-
+    
     # save this values for later
     means = ddf.mean()
     stds = ddf.std()
@@ -143,13 +143,13 @@ def imputeMetadata():
         logFile.write("data were transformed to have mean zero and standard deviation of 1 prior to imputation.")
         logFile.write("imputed values were initialized to the distribution mean.")
         logFile.write("final loss: " + str(losses[-1]))
-
+    
     # save the data
     with torch.no_grad():
         dataToAnalyzeCopy = dataToAnalyze.clone() # copy the original data
         dataToAnalyzeCopy[mask] = imputedData[mask]
         dataToAnalyzeCopy.numpy()
-        outDf = pd.DataFrame(dataToAnalyzeCopy.T, columns=keeperCols, index=list(range(len(list(df["Catchment ID"])))))
+        outDf = pd.DataFrame(dataToAnalyzeCopy.T, columns=keeperCols, index=list(range(len(list(df["catchment"])))))
         #outDf["catchment"] = df["catchment"]
 
         # re-scale to have the same values as the original data
@@ -160,6 +160,6 @@ def imputeMetadata():
             df[col] = outDf[col]
 
         # nobody will ever know the difference :) (except that they have different names)
-        path = os.path.join(outputFilesPath, "imputedMetadata.csv")
+        path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
         df.to_csv(path, index=False)
 

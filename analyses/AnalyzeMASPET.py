@@ -35,7 +35,7 @@ def analyzeMASPET():
         dataDict["catchment"].append(cat)
         dataDict["maspetSlope"].append(slope)
         dataDict["maspetMean"].append(mean)
-        dataDict["maspetPercentChange"].append(slope / mean)
+        dataDict["maspetPercentChange"].append(100 * (slope / mean))
 
         loop.set_description("Computing mean annual specific potential evapotranspiration")
         loop.update(1)

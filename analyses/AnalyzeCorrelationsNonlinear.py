@@ -87,8 +87,9 @@ def nonlinearAnalysis(df, tag, numRepeats):
             # save the data
             dataDict["target"].append(predictable)
             dataDict["score"].append(score)
+
             for predictorVar in predictorVars:
-                if predictorVar in colsToImportances:
+                if predictorVar in colsToImportances.keys():
                     dataDict[predictorVar].append(colsToImportances[predictorVar])
                 else:
                     dataDict[predictorVar].append(None)

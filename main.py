@@ -7,6 +7,7 @@ from analyses.AnalyzePET_ET import analyzePET_ET
 from analyses.AnalyzePET_P import analyzePET_P
 from analyses.AnalyzeET_P import analyzeET_P
 from analyses.AnalyzeP_PET import analyzeP_PET
+from analyses.AnalyzeP_ET import analyzeP_ET
 
 # magnitude analyses
 from analyses.AnalyzeMASD import analyzeMASD
@@ -66,64 +67,64 @@ def main():
 
 
     # adjust timeseries for ease of computation ***************************
-    combineTimeseries()
-    addLocalWaterYear()
+    #combineTimeseries()
+    #addLocalWaterYear()
 
     # ratio analyses ******************************************************
-    analyzeD_P() # discharge / precip (runoff ratio)
-    analyzePET_ET() #
-    analyzePET_P() # Budyko x-axis (aridity index)
-    analyzeET_P() # Budyko y-axis
-    analyzeP_PET() # Humidity Index
-
+    #analyzeD_P() # discharge / precip (runoff ratio)
+    #analyzePET_ET() #
+    #analyzePET_P() # Budyko x-axis (aridity index)
+    #analyzeET_P() # Budyko y-axis
+    #analyzeP_PET() # Humidity Index
+    #analyzeP_ET() # Humidity Index
 
     # magnitude of timeseries (mean annual) *******************************
-    analyzeMASD() # specific discharge
-    analyzeMASP() # specific precipitation
-    analyzeMAT() # temperature
-    analyzeMASET() # specific evapotranspiration
-    analyzeMASPET() # specific potential evapotranspiration
+    #analyzeMASD() # specific discharge
+    #analyzeMASP() # specific precipitation
+    #analyzeMAT() # temperature
+    #analyzeMASET() # specific evapotranspiration
+    #analyzeMASPET() # specific potential evapotranspiration
 
     # timing of timeseries (day of) ***************************************
 
     # mean
-    analyzeDOMF() # flow
-    analyzeDOMP() # precip
-    analyzeDOMT() # temperature
-    analyzeDOMET() # et
-    analyzeDOMPET() # pet
+    #analyzeDOMF() # flow
+    #analyzeDOMP() # precip
+    #analyzeDOMT() # temperature
+    #analyzeDOMET() # et
+    #analyzeDOMPET() # pet
 
     # peak
-    analyzeDOPF() # flow
-    analyzeDOPP() # precip
-    analyzeDOPT() # temperature
-    analyzeDOPET() # et
-    analyzeDOPPET() # pet
+    #analyzeDOPF() # flow
+    #analyzeDOPP() # precip
+    #analyzeDOPT() # temperature
+    #analyzeDOPET() # et
+    #analyzeDOPPET() # pet
 
 
     # spectral properties of timeseries (period of) ***********************
-    analyzePOMMF() # flow
-    analyzePOMMP() # precip
-    analyzePOMMT() # temperature
-    analyzePOMMET() # et
-    analyzePOMMPET() # pet
+    #analyzePOMMF() # flow
+    #analyzePOMMP() # precip
+    #analyzePOMMT() # temperature
+    #analyzePOMMET() # et
+    #analyzePOMMPET() # pet
 
     # combine the data with the metadata
-    imputeMetadata()
-    pcaMetadata()
-    combineResults()
+    #combineResults()
+    #imputeMetadata()
+    #pcaMetadata()
 
     # Identify important variables
-    analyzeCorrelations() # visual representation connections between variables
-    analyzeCorrelationsLinear() # linear regression analysis
-    analyzeCorrelationsNonlinear() # ml regression analysis
-    analyzeCorrelationsFigure() # combine together into figures
+    #analyzeCorrelations() # visual representation connections between variables
+    #analyzeCorrelationsLinear() # linear regression analysis
+    #analyzeCorrelationsNonlinear() # ml regression analysis
+    #analyzeCorrelationsFigure() # combine together into figures
 
     # Identify important PCA variables
-    analyzeCorrelationsPCA() #isual representation connections between variables
-    analyzeCorrelationsLinearPCA() # linear regression analysis
-    analyzeCorrelationsNonlinearPCA() # ml regression analysis
-    analyzeCorrelationsFigurePCA() # combine together into figures
+    #analyzeCorrelationsPCA() #isual representation connections between variables
+    #analyzeCorrelationsLinearPCA() # linear regression analysis
+    #analyzeCorrelationsNonlinearPCA() # ml regression analysis
+    #analyzeCorrelationsFigurePCA() # combine together into figures
 
     #analyzeBudykoChanges()
 
