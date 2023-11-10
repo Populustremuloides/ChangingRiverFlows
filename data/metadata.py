@@ -64,6 +64,10 @@ figurePath = os.path.join(outputPath, "figures")
 if not os.path.exists(figurePath):
     os.mkdir(figurePath)
 
+individualVarsPath = os.path.join(figurePath, "individualVars")
+if not os.path.exists(individualVarsPath):
+    os.mkdir(individualVarsPath)
+
 # make a log directory
 logPath = os.path.join(rootPath, "logs")
 if not os.path.exists(logPath):

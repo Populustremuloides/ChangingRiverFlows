@@ -58,11 +58,9 @@ from analyses.AnalyzeCorrelationsNonlinearPCA import analyzeCorrelationsNonlinea
 from analyses.AnalyzeCorrelationsFigurePCA import analyzeCorrelationsFigurePCA
 
 
-from analyses.AnalyzeBudykoChanges import analyzeBudykoChanges
-
 #from analyses.colorCatchments import * # FIXME: remove this
 from analyses.MapAll import mapAll # FIXME: remove this
-from analyses.AnalyzeBudyko import analyzeBudyko
+from analyses.AnalyzeIndividualVars import analyzeIndividualVars
 
 def main():
 
@@ -113,22 +111,22 @@ def main():
     # combine the data with the metadata
     #combineResults()
     #imputeMetadata()
-    computeM()
-    pcaMetadata()
+    #computeM()
+    #pcaMetadata()
 
     # Identify important variables
-    analyzeCorrelations() # visual representation connections between variables
-    analyzeCorrelationsLinear() # linear regression analysis
-    analyzeCorrelationsNonlinear() # ml regression analysis
-    analyzeCorrelationsFigure() # combine together into figures
+    #analyzeCorrelations() # visual representation connections between variables
+    #analyzeCorrelationsLinear() # linear regression analysis
+    #analyzeCorrelationsNonlinear() # ml regression analysis
+    #analyzeCorrelationsFigure() # combine together into figures
 
     # Identify important PCA variables
-    analyzeCorrelationsPCA() #isual representation connections between variables
-    analyzeCorrelationsLinearPCA() # linear regression analysis
-    analyzeCorrelationsNonlinearPCA() # ml regression analysis
-    analyzeCorrelationsFigurePCA() # combine together into figures
+    #analyzeCorrelationsPCA() #isual representation connections between variables
+    #analyzeCorrelationsLinearPCA() # linear regression analysis
+    #analyzeCorrelationsNonlinearPCA() # ml regression analysis
+    #analyzeCorrelationsFigurePCA() # combine together into figures
 
-    analyzeBudykoChanges()
+    analyzeIndividualVars()
 
     # relationships with important variables
 

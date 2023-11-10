@@ -18,8 +18,8 @@ across figures.
 
 # will break if functions are called before combinedTimeseriesSummariesAndMetadata.csv is computed
 
-logPath = os.path.join(logPath, "log_mappingLog.txt")
-with open(logPath, "w+") as logFile:
+loggingPath = os.path.join(logPath, "log_mappingLog.txt")
+with open(loggingPath, "w+") as logFile:
     pass # reset log file
 
 
@@ -81,7 +81,7 @@ def _printTruncation(var, lowerBound, upperBound, df, transform=None):
     else:
         numTruncated = np.sum(df[var] < lowerBound) + np.sum(df[var] > upperBound)
 
-    with open(logPath, "a+") as logFile:
+    with open(loggingPath, "a+") as logFile:
         logFile.writelines("*******************\n")
         logFile.writelines("number truncated for " + var + " " + str(numTruncated) + "\n")
         logFile.writelines("\n")
