@@ -41,8 +41,9 @@ from analyses.AnalyzePOMMPET import analyzePOMMPET
 
 # later stage analyses ********************************
 from analyses.ImputeMetadata import imputeMetadata
-from analyses.PCAMetadata import pcaMetadata
 from analyses.CombineResults import combineResults
+from analyses.ComputeM import computeM
+from analyses.PCAMetadata import pcaMetadata
 
 # analzye correlations between variables *************
 from analyses.AnalyzeCorrelations import analyzeCorrelations
@@ -61,7 +62,7 @@ from analyses.AnalyzeBudykoChanges import analyzeBudykoChanges
 
 #from analyses.colorCatchments import * # FIXME: remove this
 from analyses.MapAll import mapAll # FIXME: remove this
-
+from analyses.AnalyzeBudyko import analyzeBudyko
 
 def main():
 
@@ -112,21 +113,22 @@ def main():
     # combine the data with the metadata
     #combineResults()
     #imputeMetadata()
-    #pcaMetadata()
+    computeM()
+    pcaMetadata()
 
     # Identify important variables
-    #analyzeCorrelations() # visual representation connections between variables
-    #analyzeCorrelationsLinear() # linear regression analysis
-    #analyzeCorrelationsNonlinear() # ml regression analysis
-    #analyzeCorrelationsFigure() # combine together into figures
+    analyzeCorrelations() # visual representation connections between variables
+    analyzeCorrelationsLinear() # linear regression analysis
+    analyzeCorrelationsNonlinear() # ml regression analysis
+    analyzeCorrelationsFigure() # combine together into figures
 
     # Identify important PCA variables
-    #analyzeCorrelationsPCA() #isual representation connections between variables
-    #analyzeCorrelationsLinearPCA() # linear regression analysis
-    #analyzeCorrelationsNonlinearPCA() # ml regression analysis
-    #analyzeCorrelationsFigurePCA() # combine together into figures
+    analyzeCorrelationsPCA() #isual representation connections between variables
+    analyzeCorrelationsLinearPCA() # linear regression analysis
+    analyzeCorrelationsNonlinearPCA() # ml regression analysis
+    analyzeCorrelationsFigurePCA() # combine together into figures
 
-    #analyzeBudykoChanges()
+    analyzeBudykoChanges()
 
     # relationships with important variables
 
@@ -134,7 +136,9 @@ def main():
     # distribution figures
 
     # global figures
-    mapAll("imputed")
+    #mapAll("imputed")
+    
+    #analyzeBudyko()
 
     print("all analyses complete")
 

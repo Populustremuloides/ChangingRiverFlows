@@ -804,7 +804,7 @@ def getColors(var, m, df, transform=None):
         colors.append(c)
     return colors
 
-def getM(variable, cmap):
+def getM(variable, cmap, df):
     if variable == "maspMeanLog":
         function = getM_MeanPrecAnnLog
     elif variable == "matMean":
@@ -841,7 +841,7 @@ def getM(variable, cmap):
     if type(cmap) == type("string"):
         cmap = getCmapFromString(cmap)
 
-    m = function(cmap)
+    m = function(cmap, df)
     return m
 
 def plotColorbar(variable, cmap, df, pLeft=False):
