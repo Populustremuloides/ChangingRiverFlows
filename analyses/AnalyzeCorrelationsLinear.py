@@ -108,6 +108,7 @@ def analyzeCorrelationsLinear():
     for tag in tags:
         dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
         df = pd.read_csv(dataFilePath)
+        df = df[np.array(~df["p_petSlope"].isna())] # keep only the rows for which we have data
         linearAnalysis(df, tag, numRepeats)
 
 

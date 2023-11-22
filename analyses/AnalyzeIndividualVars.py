@@ -11,6 +11,7 @@ import torch
 import torch.optim as optim
 import torch.nn as nn
 from scipy.stats import spearmanr
+import copy
 
 def plotFuh():
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
@@ -79,12 +80,35 @@ def testAll(df, var1, oFile, abso):
     newLine(oFile) 
 
 def analyzeCorrelations():
+    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
+    df = pd.read_csv(dataFilePath)
+    df = df[~df["d_pSlope"].isna()]
+
+    absos = [True, False]
+
+    for abso in absos:
+        for predictable in list(predictablesToPretty.keys()):
+            ldf = copy.copy(df[[predictable] + list(predictorsToPretty.keys())])
+            ldf = ldf.dropna()
+            cols = np.array(ldf.columns)
+            if abso:
+                ldf[predictable] = ldf[predictable].abs()
+            result = spearmanr(ldf.to_numpy())
+            correlations = result[0][0,:]
+            pvals = result[1][0,:]
+            indices = np.flip(np.argsort(np.abs(correlations)))
+
+            if abso:
+                outDf = pd.DataFrame.from_dict({"absolute_predictors":cols[indices[1:]],"correlations":correlations[indices[1:]],"pvals":pvals[indices[1:]]})
+                outDf.to_csv(os.path.join(outputFilesPath, "individualCorrs_abs_" + str(predictable) + ".csv"), index=False)
+            else:
+                outDf = pd.DataFrame.from_dict({"predictors":cols[indices[1:]],"correlations":correlations[indices[1:]],"pvals":pvals[indices[1:]]})
+                outDf.to_csv(os.path.join(outputFilesPath, "individualCorrs_" + str(predictable) + ".csv"), index=False)
+
+    '''
     with open(os.path.join(outputFilesPath, "individual_correlations.txt"), "w+") as oFile:
 
         # use just the imputed data
-
-        dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
-        df = pd.read_csv(dataFilePath)
 
         testAll(df, "m", oFile, abso=True)
         testAll(df, "p_petSlope", oFile, abso=True)
@@ -103,7 +127,7 @@ def analyzeCorrelations():
 
         for i in range(1, 15):
             testAll(df, str(i), oFile, abso=True)
-
+    '''
 def plotVar(df, var1, var2, log=True):
     plt.scatter(x=df[var1], y=df[var2])
     
@@ -134,42 +158,24 @@ def plotVar(df, var1, var2, log=True):
 
     
 def plotRelations():
+    ''' plot the top numToPlot predictors for each variable '''
+    numToPlot = 5
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
     df = pd.read_csv(dataFilePath)
 
+    for predictable in list(predictablesToPretty.keys()):
+        ldf = pd.read_csv(os.path.join(outputFilesPath, "individualCorrs_" + str(predictable) + ".csv"))
+        for i in range(numToPlot):
+            var = ldf["predictors"][i]
+            plotVar(df, var, predictable)
 
 
+    for predictable in list(predictablesToPretty.keys()):
+        ldf = pd.read_csv(os.path.join(outputFilesPath, "individualCorrs_abs_" + str(predictable) + ".csv"))
+        for i in range(numToPlot):
+            var = ldf["absolute_predictors"][i]
+            plotVar(df, var, predictable)
 
-    plotVar(df, "m", "d_pSlope")
-    plotVar(df, "m", "masdSlope")
-    plotVar(df, "m", "dopfSlope")
-    plotVar(df, "m", "pommfSlope")
-
-    plotVar(df, "forest", "d_pPercentChange")
-    plotVar(df, "forest", "masdPercentChange")
-
-    plotVar(df, "Catchment Area", "d_pPercentChange")
-    plotVar(df, "Catchment Area", "masdPercentChange")
-    plotVar(df, "Catchment Area", "pommfSlope")
-    plotVar(df, "cls7", "pommfSlope")
-    plotVar(df, "human", "pommfSlope")
-    plotVar(df, "human", "dopfSlope")
-    plotVar(df, "Dam_Count", "pommfSlope")
-    plotVar(df, "Dam_SurfaceArea", "pommfSlope")
-
-
-    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedPCA.csv")
-    df = pd.read_csv(dataFilePath)
-    plotVar(df, "1", "dopfSlope")
-    plotVar(df, "1", "masdSlope")
-    plotVar(df, "1", "domfSlope")
-    plotVar(df, "2", "d_pSlope")
-    plotVar(df, "2", "domfSlope")
-    plotVar(df, "2", "pommfSlope")
-    plotVar(df, "3", "d_pSlope")
-    plotVar(df, "3", "domfSlope")
-    plotVar(df, "3", "dopfSlope")
-    plotVar(df, "11", "pommfSlope")
 
 
 def analyzeIndividualVars():

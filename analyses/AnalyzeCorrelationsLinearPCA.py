@@ -103,6 +103,7 @@ def analyzeCorrelationsLinearPCA():
 
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedPCA.csv")
     df = pd.read_csv(dataFilePath)
+    df = df[np.array(~df["d_pSlope"].isna())] # keep only the rows for which we have data
     linearAnalysis(df, numRepeats)
 
 

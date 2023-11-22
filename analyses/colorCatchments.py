@@ -89,6 +89,57 @@ def _printTruncation(var, lowerBound, upperBound, df, transform=None):
         logFile.writelines("*******************\n\n")
 
 # *********************************************************************************
+# fuh's parameter
+# *********************************************************************************
+
+def getNorm_M(df, printTruncation=True):
+    var = "m"
+
+    #plt.hist(df[var], bins=50)
+    #plt.show()
+
+    minVal = np.min(df[var]) 
+    maxVal = np.max(df[var]) 
+
+    norm = mpl.colors.Normalize(vmin=minVal, vmax=maxVal)
+    lowerBound = np.min(df[var]) #FIXME: change this
+    upperBound = np.max(df[var]) #FIXME: change this
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
+    return norm
+
+def getM_M(cmap, df):
+    norm = getNorm_M(df)
+    m = cm.ScalarMappable(norm=norm, cmap=cmap)
+    return m
+
+def colorbar_M(cmap, df, save=False, pLeft=False):
+    fig, ax = plt.subplots(figsize=(3, 10))
+
+    norm = getNorm_M(df, printTruncation=True)
+    m = getM_M(cmap, df)
+    cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
+                                norm=norm,
+                                orientation='vertical')
+    cb1.set_label("Fuh's Parameter", size=15, weight='bold')
+    if pLeft:
+        fig.subplots_adjust(left=0.775)
+        ax.yaxis.set_label_position('left')
+        ax.yaxis.set_ticks_position('left')
+    else:
+        fig.subplots_adjust(right=0.25)
+
+    cb1.ax.tick_params(labelsize=20)
+    if pLeft:
+        plt.savefig(os.path.join(figurePath,"colorbarL_m.png"))
+    else:
+        plt.savefig(os.path.join(figurePath,"colorbar_m.png"))
+    plt.clf()
+    plt.close()
+
+
+# *********************************************************************************
 # log mean annual precipitation
 # *********************************************************************************
 

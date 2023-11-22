@@ -33,8 +33,11 @@ varToTitle = {
         "pommfSlope":"Change in Period of Mean Flow",
         "d_pMean":"Runoff Ratio",
         "d_pSlope":"Change in Runoff Ratio",
-        "d_pPercentChange":"Percent Change in Runoff Ratio"
+        "d_pPercentChange":"Percent Change in Runoff Ratio",
+        "m":"Fuh's Parameter"
         }
+
+
 
 varToTitleS = {
         "masdMean":"MAP_MeanAnnualSpecificDicharge.png",
@@ -48,22 +51,24 @@ varToTitleS = {
         "pommfSlope":"MAP_PeriodOfMeanFlowSlope.png",
         "d_pMean":"MAP_RunoffRatioMean.png",
         "d_pSlope":"MAP_RunoffRatioSlope.png",
-        "d_pPercentChange":"MAP_RunoffRatioPercentChange.png"
+        "d_pPercentChange":"MAP_RunoffRatioPercentChange.png",
+        "m":"MAP_FuhsParameter.png"
         }
 
 
-def plotVar(var, m, df):
+def plotVar(var, m, df, tag):
     # width, height
-    fig = plt.figure(figsize=(11 * 2, 6 * 1.5))
+    fig = plt.figure(figsize=(9 * 2, 6 * 1.5))
 
-    ax = fig.add_subplot(1,1,1, projection=ccrs.PlateCarree())
-    ax.set_extent([-180,180,-58,83], crs=ccrs.PlateCarree())
+    ax = fig.add_subplot(1,1,1, projection=ccrs.InterruptedGoodeHomolosine()) #Robinson()) #ccrs.PlateCarree())
+    ax.set_global()
+    #ax.set_extent([-180,180,-58,83], crs=ccrs.PlateCarree())
     ax.add_feature(cfeature.COASTLINE)
 
     colors = getColors(var, m, df)
-    plt.scatter(x=df["Longitude"], y=df["Latitude"], c=colors, s=5, alpha=0.9)
-
-    plt.savefig(os.path.join(figurePath, varToTitleS[var]), dpi=300)
+    plt.scatter(x=df["Longitude"], y=df["Latitude"], c=colors, s=5, alpha=0.9, transform=ccrs.PlateCarree())
+    plt.tight_layout()
+    plt.savefig(os.path.join(figurePath, tag + "_" + varToTitleS[var]), dpi=300)
     plt.clf()
     plt.close()
 
@@ -73,27 +78,37 @@ def mapAll(tag):
     dfPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
     if os.path.exists(dfPath):
         df = pd.read_csv(dfPath)
+    
+    df = df[~df["d_pSlope"].isna()]
 
     loop = tqdm(total=12)
     loop.set_description("mapping catchments")
     cmap = seismic_r
+    
+    # Fuh's Parameter
+
+    m = getM_M(cmap, df)
+    plotVar("m", m, df, tag)
+    colorbar_M(cmap, df)
+    colorbar_M(cmap, df, pLeft=True)
+    loop.update(1)
 
     # runoff ratio
 
     m = getM_d_pMean(cmap, df)
-    plotVar("d_pMean", m, df)
+    plotVar("d_pMean", m, df, tag)
     colorbar_d_pMean(cmap, df)
     colorbar_d_pMean(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_d_pSlope(cmap, df)
-    plotVar("d_pSlope", m, df)
+    plotVar("d_pSlope", m, df, tag)
     colorbar_d_pSlope(cmap, df)
     colorbar_d_pSlope(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_d_pPercentChange(cmap, df)
-    plotVar("d_pPercentChange", m, df)
+    plotVar("d_pPercentChange", m, df, tag)
     colorbar_d_pPercentChange(cmap, df)
     colorbar_d_pPercentChange(cmap, df, pLeft=True)
     loop.update(1)
@@ -101,19 +116,19 @@ def mapAll(tag):
     # mean annual specific discharge
 
     m = getM_masdMean(cmap, df)
-    plotVar("masdMean", m, df)
+    plotVar("masdMean", m, df, tag)
     colorbar_masdMean(cmap, df)
     colorbar_masdMean(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_masdSlope(cmap, df)
-    plotVar("masdSlope", m, df)
+    plotVar("masdSlope", m, df, tag)
     colorbar_masdSlope(cmap, df)
     colorbar_masdSlope(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_masdPercentChange(cmap, df)
-    plotVar("masdPercentChange", m, df)
+    plotVar("masdPercentChange", m, df, tag)
     colorbar_masdPercentChange(cmap, df)
     colorbar_masdPercentChange(cmap, df, pLeft=True)
     loop.update(1)
@@ -121,13 +136,13 @@ def mapAll(tag):
     # period of mean flow
 
     m = getM_pommfMean(cmap, df)
-    plotVar("pommfMean", m, df)
+    plotVar("pommfMean", m, df, tag)
     colorbar_pommfMean(cmap, df)
     colorbar_pommfMean(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_pommfSlope(cmap, df)
-    plotVar("pommfSlope", m, df)
+    plotVar("pommfSlope", m, df, tag)
     colorbar_pommfSlope(cmap, df)
     colorbar_pommfSlope(cmap, df, pLeft=True)
     loop.update(1)
@@ -135,13 +150,13 @@ def mapAll(tag):
     # day of mean flow
 
     m = getM_domfMean(cmap, df)
-    plotVar("domfMean", m, df)
+    plotVar("domfMean", m, df, tag)
     colorbar_domfMean(cmap, df)
     colorbar_domfMean(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_domfSlope(cmap, df)
-    plotVar("domfSlope", m, df)
+    plotVar("domfSlope", m, df, tag)
     colorbar_domfSlope(cmap, df)
     colorbar_domfSlope(cmap, df, pLeft=True)
     loop.update(1)
@@ -149,13 +164,13 @@ def mapAll(tag):
     # day of peak flow
 
     m = getM_dopfMean(cmap, df)
-    plotVar("dopfMean", m, df)
+    plotVar("dopfMean", m, df, tag)
     colorbar_dopfMean(cmap, df)
     colorbar_dopfMean(cmap, df, pLeft=True)
     loop.update(1)
 
     m = getM_dopfSlope(cmap, df)
-    plotVar("dopfSlope", m, df)
+    plotVar("dopfSlope", m, df, tag)
     colorbar_dopfSlope(cmap, df)
     colorbar_dopfSlope(cmap, df, pLeft=True)
     loop.update(1)

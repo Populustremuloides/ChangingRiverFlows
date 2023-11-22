@@ -26,6 +26,6 @@ def _analzye(df):
 def analyzeCorrelationsPCA():
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedPCA.csv")
     df = pd.read_csv(dataFilePath)
+    df = df[np.array(~df["1"].isna())] # keep only the rows for which we have data
     _analzye(df)
-
 

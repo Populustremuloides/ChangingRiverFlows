@@ -7,7 +7,6 @@ import copy
 
 def pcaMetadata():
 
-
     path = os.path.join(outputFilesPath,"combinedTimeseriesSummariesAndMetadata_imputed.csv")
     df = pd.read_csv(path)
 
@@ -19,7 +18,7 @@ def pcaMetadata():
     df = df.drop(droppers + ["catchment"], axis=1)
     df = df.drop(list(predictablesToPretty.keys()), axis=1)
     cols = df.columns
-    
+
     # normalize
     df = df - df.mean()
     df = df / df.std()
@@ -44,7 +43,6 @@ def pcaMetadata():
     outDf = pd.DataFrame(transformedData[:,:g_numPCAVarsToKeep], columns=np.arange(g_numPCAVarsToKeep) + 1)
     outDf["catchment"] = catchments # add back in the features that will be predicted later on
     outDf = predictablesDf.merge(outDf, on="catchment")
-    print(outDf)
     
     # log what we did
     with open(os.path.join(logPath, "log_PCA_analysis.txt"), "w+") as logFile:

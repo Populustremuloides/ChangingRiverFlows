@@ -17,12 +17,13 @@ def computeM():
     Solve for the value of "m" in Fuh's Equation
     '''
 
-    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
+    dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df = pd.read_csv(dataFilePath)
- 
-    ws = torch.nn.Parameter(torch.rand(len(df["catchment"])) + 1) # initialize
-    y = torch.Tensor(df["d_pMean"])
-    p_pets = torch.Tensor(df["p_petMean"])
+    mask =  np.array(~df["d_pMean"].isna())
+
+    ws = torch.nn.Parameter(torch.rand(len(df[mask]["catchment"])) + 1) # initialize
+    y = torch.Tensor(df[mask]["d_pMean"])
+    p_pets = torch.Tensor(df[mask]["p_petMean"])
     optimizer = optim.Adam([ws], lr=1e-3)
     numEpochs = 10000
     loop = tqdm(total=numEpochs)
@@ -46,12 +47,18 @@ def computeM():
     plt.xlabel("iteration")
     plt.savefig(os.path.join(figurePath, "loss_solving_for_m.png"))
     
-    df["m"] = ws.detach().numpy()
-    outputPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
+    ws = ws.detach().numpy()
+    newMs = []
+    wsIndex = 0
+    for maskVal in mask:
+        if maskVal:
+            newMs.append(ws[wsIndex])
+            wsIndex += 1
+        else:
+            newMs.append(None)
+
+    df["m"] = newMs 
+    outputPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df.to_csv(outputPath, index=False)
 
-    rawPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
-    rdf = pd.read_csv(rawPath)
-    rdf["m"] = ws.detach().numpy()
-    rdf.to_csv(rawPath, index=False)
 

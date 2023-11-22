@@ -1,5 +1,6 @@
 from analyses.CombineTimeseries import combineTimeseries
 from analyses.AddLocalWaterYear import addLocalWaterYear
+from analyses.CalculateBudgetDeficits import calculateBudgetDeficits
 
 # ratio analyses
 from analyses.AnalyzeD_P import analyzeD_P
@@ -54,89 +55,91 @@ from analyses.AnalyzeCorrelationsFigure import analyzeCorrelationsFigure
 
 from analyses.AnalyzeCorrelationsPCA import analyzeCorrelationsPCA
 from analyses.AnalyzeCorrelationsLinearPCA import analyzeCorrelationsLinearPCA
-from analyses.AnalyzeCorrelationsNonlinearPCA import analyzeCorrelationsNonlinearPCA
+from analyses.AnalyzeCorrelationsNonLinearPCA import analyzeCorrelationsNonlinearPCA
 from analyses.AnalyzeCorrelationsFigurePCA import analyzeCorrelationsFigurePCA
 
 
-#from analyses.colorCatchments import * # FIXME: remove this
-from analyses.MapAll import mapAll # FIXME: remove this
+from analyses.MapAll import mapAll 
 from analyses.AnalyzeIndividualVars import analyzeIndividualVars
+from analyses.MapM import mapM
+
+from analyses.ImputeChanges import imputeChanges
+
+from analyses.plotDistributions import plotDistributions
 
 def main():
 
-
     # adjust timeseries for ease of computation ***************************
-    #combineTimeseries()
-    #addLocalWaterYear()
+    combineTimeseries()
+    addLocalWaterYear()
+    
+    # calculate budget deficits
+    calculateBudgetDeficits()
 
     # ratio analyses ******************************************************
-    #analyzeD_P() # discharge / precip (runoff ratio)
-    #analyzePET_ET() #
-    #analyzePET_P() # Budyko x-axis (aridity index)
-    #analyzeET_P() # Budyko y-axis
-    #analyzeP_PET() # Humidity Index
-    #analyzeP_ET() # Humidity Index
+    analyzeD_P() # discharge / precip (runoff ratio)
+    analyzePET_ET() #
+    analyzePET_P() # Budyko x-axis (aridity index)
+    analyzeET_P() # Budyko y-axis
+    analyzeP_PET() # Humidity Index
+    analyzeP_ET() # Humidity Index
 
     # magnitude of timeseries (mean annual) *******************************
-    #analyzeMASD() # specific discharge
-    #analyzeMASP() # specific precipitation
-    #analyzeMAT() # temperature
-    #analyzeMASET() # specific evapotranspiration
-    #analyzeMASPET() # specific potential evapotranspiration
+    analyzeMASD() # specific discharge
+    analyzeMASP() # specific precipitation
+    analyzeMAT() # temperature
+    analyzeMASET() # specific evapotranspiration
+    analyzeMASPET() # specific potential evapotranspiration
 
     # timing of timeseries (day of) ***************************************
 
     # mean
-    #analyzeDOMF() # flow
-    #analyzeDOMP() # precip
-    #analyzeDOMT() # temperature
-    #analyzeDOMET() # et
-    #analyzeDOMPET() # pet
+    analyzeDOMF() # flow
+    analyzeDOMP() # precip
+    analyzeDOMT() # temperature
+    analyzeDOMET() # et
+    analyzeDOMPET() # pet
 
     # peak
-    #analyzeDOPF() # flow
-    #analyzeDOPP() # precip
-    #analyzeDOPT() # temperature
-    #analyzeDOPET() # et
-    #analyzeDOPPET() # pet
-
+    analyzeDOPF() # flow
+    analyzeDOPP() # precip
+    analyzeDOPT() # temperature
+    analyzeDOPET() # et
+    analyzeDOPPET() # pet
 
     # spectral properties of timeseries (period of) ***********************
-    #analyzePOMMF() # flow
-    #analyzePOMMP() # precip
-    #analyzePOMMT() # temperature
-    #analyzePOMMET() # et
-    #analyzePOMMPET() # pet
+    analyzePOMMF() # flow
+    analyzePOMMP() # precip
+    analyzePOMMT() # temperature
+    analyzePOMMET() # et
+    analyzePOMMPET() # pet
 
     # combine the data with the metadata
-    #combineResults()
-    #imputeMetadata()
-    #computeM()
-    #pcaMetadata()
+    combineResults()
+    computeM()
+    imputeMetadata()
+    pcaMetadata()
 
     # Identify important variables
-    #analyzeCorrelations() # visual representation connections between variables
-    #analyzeCorrelationsLinear() # linear regression analysis
-    #analyzeCorrelationsNonlinear() # ml regression analysis
-    #analyzeCorrelationsFigure() # combine together into figures
+    analyzeCorrelations() # visual representation connections between variables
+    analyzeCorrelationsLinear() # linear regression analysis
+    analyzeCorrelationsNonlinear() # ml regression analysis
+    analyzeCorrelationsFigure() # combine together into figures
 
     # Identify important PCA variables
-    #analyzeCorrelationsPCA() #isual representation connections between variables
-    #analyzeCorrelationsLinearPCA() # linear regression analysis
-    #analyzeCorrelationsNonlinearPCA() # ml regression analysis
-    #analyzeCorrelationsFigurePCA() # combine together into figures
-
-    analyzeIndividualVars()
-
-    # relationships with important variables
-
-
-    # distribution figures
-
-    # global figures
-    #mapAll("imputed")
+    analyzeCorrelationsPCA() #isual representation connections between variables
+    analyzeCorrelationsLinearPCA() # linear regression analysis
+    analyzeCorrelationsNonlinearPCA() # ml regression analysis
+    analyzeCorrelationsFigurePCA() # combine together into figures
     
-    #analyzeBudyko()
+    # global figures
+    mapAll("raw")
+    imputeChanges()
+    mapAll("imputedAll")
+    
+    # plot changes
+    plotDistributions()
+    analyzeIndividualVars()
 
     print("all analyses complete")
 

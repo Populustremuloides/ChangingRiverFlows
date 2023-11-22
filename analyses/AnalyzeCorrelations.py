@@ -13,6 +13,7 @@ import numpy as np
 def _analzye(df, tag):
     # some minor cleaning of up variables that aren't numeric
     df = df.drop(["catchment","quality","River","Station","Country","LINKNO","Ecoregion_Name","Continent","BIOME","ECO_NAME"], axis=1)
+    df = df[np.array(~df["p_petMean"].isna())]
 
     seismic = mpl.cm.get_cmap('seismic')
 

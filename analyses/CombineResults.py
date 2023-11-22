@@ -8,7 +8,7 @@ def _combine(df, tag):
         if file.startswith("timeseriesSummary"):
 
             tdf = pd.read_csv(os.path.join(outputFilesPath, file))
-            df = df.merge(tdf, on="catchment")
+            df = df.merge(tdf, on="catchment", how="left")
 
     path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
     df.to_csv(path, index=False)
