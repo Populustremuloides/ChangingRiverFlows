@@ -1,0 +1,780 @@
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 4
+
+ = 0.34662045060658575 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 4
+
+ = 0.34662045060658575 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 4
+
+ = 0.34662045060658575 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 4
+
+ = 0.34662045060658575 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 4
+
+ = 0.34662045060658575 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.6932409012131715 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.6932409012131715 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.6932409012131715 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.6932409012131715 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.6932409012131715 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for masdMean 11
+
+ = 0.9532062391681109 % of the data
+*******************
+
+*******************
+number truncated for masdMean 11
+
+ = 0.9532062391681109 % of the data
+*******************
+
+*******************
+number truncated for masdMean 11
+
+ = 0.9532062391681109 % of the data
+*******************
+
+*******************
+number truncated for masdMean 11
+
+ = 0.9532062391681109 % of the data
+*******************
+
+*******************
+number truncated for masdMean 11
+
+ = 0.9532062391681109 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.8665511265164645 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.8665511265164645 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.8665511265164645 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.8665511265164645 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.8665511265164645 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.08665511265164644 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.08665511265164644 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.08665511265164644 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.08665511265164644 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.08665511265164644 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 3
+
+ = 0.26455026455026454 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 3
+
+ = 0.26455026455026454 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 3
+
+ = 0.26455026455026454 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 3
+
+ = 0.26455026455026454 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 3
+
+ = 0.26455026455026454 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.4409171075837742 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.4409171075837742 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.4409171075837742 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.4409171075837742 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.4409171075837742 % of the data
+*******************
+
+*******************
+number truncated for domfMean 4
+
+ = 0.3527336860670194 % of the data
+*******************
+
+*******************
+number truncated for domfMean 4
+
+ = 0.3527336860670194 % of the data
+*******************
+
+*******************
+number truncated for domfMean 4
+
+ = 0.3527336860670194 % of the data
+*******************
+
+*******************
+number truncated for domfMean 4
+
+ = 0.3527336860670194 % of the data
+*******************
+
+*******************
+number truncated for domfMean 4
+
+ = 0.3527336860670194 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.08818342151675485 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.08818342151675485 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.08818342151675485 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.08818342151675485 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.08818342151675485 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 24
+
+ = 2.079722703639515 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 24
+
+ = 2.079722703639515 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 24
+
+ = 2.079722703639515 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 24
+
+ = 2.079722703639515 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 24
+
+ = 2.079722703639515 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.17331022530329288 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for m 0
+
+ = 0.0 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 120
+
+ = 2.923976608187134 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 120
+
+ = 2.923976608187134 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 120
+
+ = 2.923976608187134 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 120
+
+ = 2.923976608187134 % of the data
+*******************
+
+*******************
+number truncated for d_pMean 120
+
+ = 2.923976608187134 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.1949317738791423 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.1949317738791423 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.1949317738791423 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.1949317738791423 % of the data
+*******************
+
+*******************
+number truncated for d_pSlope 8
+
+ = 0.1949317738791423 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for d_pPercentChange 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for masdMean 164
+
+ = 3.996101364522417 % of the data
+*******************
+
+*******************
+number truncated for masdMean 164
+
+ = 3.996101364522417 % of the data
+*******************
+
+*******************
+number truncated for masdMean 164
+
+ = 3.996101364522417 % of the data
+*******************
+
+*******************
+number truncated for masdMean 164
+
+ = 3.996101364522417 % of the data
+*******************
+
+*******************
+number truncated for masdMean 164
+
+ = 3.996101364522417 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdSlope 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for masdPercentChange 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for pommfMean 10
+
+ = 0.24366471734892786 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for pommfSlope 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for domfMean 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for domfMean 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for domfMean 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for domfMean 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for domfMean 5
+
+ = 0.12183235867446393 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for domfSlope 1
+
+ = 0.024366471734892786 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 25
+
+ = 0.6091617933723197 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 25
+
+ = 0.6091617933723197 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 25
+
+ = 0.6091617933723197 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 25
+
+ = 0.6091617933723197 % of the data
+*******************
+
+*******************
+number truncated for dopfMean 25
+
+ = 0.6091617933723197 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.04873294346978557 % of the data
+*******************
+
+*******************
+number truncated for dopfSlope 2
+
+ = 0.04873294346978557 % of the data
+*******************
+

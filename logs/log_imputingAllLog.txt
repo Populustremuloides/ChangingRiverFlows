@@ -1,1 +1,1 @@
-Loss = $\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$data were transformed to have mean zero and standard deviation of 1 prior to imputation.imputed values were initialized to the distribution mean.final loss: 4.757020909797211
+Loss = $\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$data were transformed to have mean zero and standard deviation of 1 prior to imputation.imputed values were initialized to the distribution mean.final loss: 12.535309824214057

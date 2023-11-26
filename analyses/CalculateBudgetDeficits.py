@@ -13,10 +13,8 @@ def calculateBudgetDeficits():
 
     numCats = len(os.listdir(augmentedTimeseriesPath))
     loop = tqdm(total=numCats)
-    print("in buget")
 
     for file in os.listdir(augmentedTimeseriesPath):
-        print("new file")
         dataFilePath = os.path.join(augmentedTimeseriesPath, file)
         df = pd.read_csv(dataFilePath)
 
@@ -27,9 +25,6 @@ def calculateBudgetDeficits():
         etMean = np.mean(df[etVar])
         precipMean = np.mean(df[precipVar])
         dischargeMean = np.mean(df[dischargeVar])
-        print(df)
-        print(df.describe())
-        input("any key")       
         deficit = precipMean - etMean - dischargeMean
         percentDeficit = 100 * (deficit / dischargeMean)
 

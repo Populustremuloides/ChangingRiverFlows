@@ -70,8 +70,8 @@ from analyses.plotDistributions import plotDistributions
 def main():
 
     # adjust timeseries for ease of computation ***************************
-    combineTimeseries()
-    addLocalWaterYear()
+    #combineTimeseries()
+    #addLocalWaterYear()
     
     # calculate budget deficits
     calculateBudgetDeficits()
