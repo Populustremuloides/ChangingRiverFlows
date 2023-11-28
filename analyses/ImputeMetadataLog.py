@@ -10,17 +10,17 @@ from tqdm import tqdm
 
 # read in the data
 
-def imputeChanges():
+def imputeMetadataLog():
     '''
-    use gradient descent to impute the changes in predictable variables 
-    in a way that does not alter the correlation or the covariance structure 
-    of the variables with each other.
+    use gradient descent to impute data in a way that
+    does not alter the correlation structure of the
+    variables with each other
     '''
 
-    numIterations = 50#00
+    numIterations = 30000
 
     # read in the metadata file
-    df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv"))
+    df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv"))
 
     #df = df.drop(df.columns[0], axis=1)
 
@@ -34,26 +34,41 @@ def imputeChanges():
         except:
             pass
 
+    predictables = list(predictablesToPretty.keys())
+    keeperCols = list(set(keeperCols) - set(predictables))
+    keeperCols.sort()
+
     # identify missing data
     ddf = df[keeperCols]
+    #ddf = ddf.drop(list(predictablesToPretty.keys()), axis=1)
 
     # save this values for later
-    means = ddf.mean()
-    stds = ddf.std()
+    mins = ddf.min()
+    minFactors = []
+    for col in ddf.columns:
+        mini = ddf[col].min()
+        std = ddf[col].std()
+        if mini < 0:
+            minFactors.append((-1. * mini) + 1. + std) # allow the variable to be up to one standard deviation lower
+        elif mini < 1:
+            minFactors.append(0.000001) # just add 1
+        else:
+            minFactors.append(0.)
 
+    minFactors = np.array(minFactors)
+    ddf = ddf + minFactors #ddf.mean()
 
-    ddf = ddf - means #ddf.mean()
-    ddf = ddf / stds #ddf.std()
+    # log every column:
+    for col in ddf.columns:
+        mask = ~ddf[col].isna()
+        ddf[col][mask] = np.log(ddf[col][mask])
+    print(ddf)
+
     data = ddf.to_numpy().T
     data = np.array(data, dtype=np.float32)
     mask = torch.from_numpy(np.isnan(data))
-
-    # store the % nan values in the dataset
-    numNan = torch.sum(mask.flatten())
-    percentNan = 100 * (numNan.item() / (data.shape[0] * data.shape[1]))
-
     data = torch.from_numpy(data)
-    
+
     targetCorrelations = torch.tensor(ddf.corr().to_numpy())
     #targetCovariances = torch.tensor(ddf.cov().to_numpy())
 
@@ -78,7 +93,7 @@ def imputeChanges():
         # and the imputed data
         imputedCorr = torch.corrcoef(dataToAnalyzeCopy)
         diffCorr = imputedCorr - targetCorrelations
-        imputedCov = torch.cov(dataToAnalyzeCopy)
+        #imputedCov = torch.cov(dataToAnalyzeCopy)
         #diffCov = imputedCov - targetCovariances
 
         # calculate the loss / update imputed data
@@ -91,8 +106,12 @@ def imputeChanges():
         loop.set_description("imputing data loss: " + str(loss.detach().numpy()) + " ")
 
     # visualize the correlation matrices before and after
+    print()
+    print("made it here") 
+    print()
 
     with torch.no_grad():
+
         dataToAnalyzeCopy = dataToAnalyze.clone() # copy the original data
         dataToAnalyzeCopy[mask] = imputedData[mask] # fill in the imputed data
 
@@ -110,7 +129,7 @@ def imputeChanges():
         ax[1].set_xlabel("Feature Index")
         ax[2].set_xlabel("Feature Index")
         plt.tight_layout()
-        plt.savefig(os.path.join(figurePath, "imputedVsRawCorrelationsAll.png"))
+        plt.savefig(os.path.join(figurePath, "imputedVsRawCorrelations.png"))
         plt.clf()
         '''
         imputedCov = torch.cov(dataToAnalyzeCopy)
@@ -126,7 +145,7 @@ def imputeChanges():
         ax[1].set_xlabel("Feature Index")
         ax[2].set_xlabel("Feature Index")
         plt.tight_layout()
-        plt.savefig(os.path.join(figurePath, "imputedVsRawCovariancesAll.png"))
+        plt.savefig(os.path.join(figurePath, "imputedVsRawCovariances.png"))
         plt.clf()
         '''
 
@@ -135,38 +154,55 @@ def imputeChanges():
     ax.plot(losses)
     ax.set_xlabel("Number of Updates")
     #ax.set_ylabel(r"$\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$")
-    ax.set_ylabel(r"$\sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$")
-
+    ax.set_ylabel(r"\sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$")
     ax.set_title("Imputation Loss During Optimization")
     plt.tight_layout()
-    plt.savefig(os.path.join(figurePath, "imputationAllOptimizationlLoss.png"))
+    plt.savefig(os.path.join(figurePath, "imputationOptimizationLoss.png"))
     plt.clf()
 
     # save a log of how the imputation process went
-    logerPath = os.path.join(logPath, "log_imputingAllLog.txt")
+    logerPath = os.path.join(logPath, "log_imputingLog.txt")
     with open(logerPath, "w+") as logFile:
-        logFile.write("Loss = " + r"$\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$" + "\n")
-        logFile.write("data were transformed to have mean zero and standard deviation of 1 prior to imputation.\n")
-        logFile.write("imputed values were initialized to the distribution mean.\n")
-        logFile.write("final loss: " + str(losses[-1]) + "\n")
-        logFile.write("percent Nan initially (included previuosly imputed data) was: " + str(percentNan) + "\n")
-
+        logFile.write("Loss = " + r"$\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$")
+        logFile.write("data were transformed to have mean zero and standard deviation of 1 prior to imputation.")
+        logFile.write("imputed values were initialized to the distribution mean.")
+        logFile.write("final loss: " + str(losses[-1]))
+    
     # save the data
     with torch.no_grad():
         dataToAnalyzeCopy = dataToAnalyze.clone() # copy the original data
         dataToAnalyzeCopy[mask] = imputedData[mask]
         dataToAnalyzeCopy.numpy()
         outDf = pd.DataFrame(dataToAnalyzeCopy.T, columns=keeperCols, index=list(range(len(list(df["catchment"])))))
-        #outDf["catchment"] = df["catchment"]
+        
+        # de-log and subtract out the minFactors
+        for col in outDf.columns:
+            outDf[col] = np.exp(outDf[col])
+        outDf = outDf - minFactors
+        
+        print("what we started with")
+        print()
+        print(df)
+        print()
+
+        print()
+        print("outDf")
+        print(outDf)
+        print()
 
         # re-scale to have the same values as the original data
-        outDf = (outDf * stds) + means
+        #outDf = (outDf * stds) + means
 
         # replace the original data
         for col in outDf.columns:
             df[col] = outDf[col]
 
         # nobody will ever know the difference :) (except that they have different names)
-        path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedAll.csv")
+        path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
         df.to_csv(path, index=False)
+
+        print() 
+        print(" after imputation ")
+        print(df)
+        print()        
 

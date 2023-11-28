@@ -88,6 +88,198 @@ def _printTruncation(var, lowerBound, upperBound, df, transform=None):
         logFile.writelines(" = " + str(100 * (numTruncated / np.sum(~df[var].isna()))) + " % of the data\n")
         logFile.writelines("*******************\n\n")
 
+
+# *********************************************************************************
+# Budget Deficits
+# *********************************************************************************
+
+def getNorm_budget_deficit(df, printTruncation=True):
+    var = "budget_deficit"
+
+    #plt.hist(df[var], bins=50)
+    #plt.show()
+    #lowerBound = np.min(np.sort(df[var])) #FIXME: change this
+    #upperBound = np.max(np.sort(df[var])) #FIXME: change this
+
+
+    lowerBound = np.min(np.sort(df[var])[50:]) #FIXME: change this
+    upperBound = -1 * lowerBound #np.max(np.sort(df[var])[:-10]) #FIXME: change this
+
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
+    return norm
+
+def getM_budget_deficit(cmap, df):
+    norm = getNorm_budget_deficit(df)
+    m = cm.ScalarMappable(norm=norm, cmap=cmap)
+    return m
+
+def colorbar_budget_deficit(cmap, df, save=False, pLeft=False):
+    fig, ax = plt.subplots(figsize=(3, 10))
+
+    norm = getNorm_budget_deficit(df, printTruncation=True)
+    m = getM_budget_deficit(cmap, df)
+    cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
+                                norm=norm,
+                                orientation='vertical')
+    cb1.set_label("Budget Deficit", size=15, weight='bold')
+    if pLeft:
+        fig.subplots_adjust(left=0.775)
+        ax.yaxis.set_label_position('left')
+        ax.yaxis.set_ticks_position('left')
+    else:
+        fig.subplots_adjust(right=0.25)
+
+    cb1.ax.tick_params(labelsize=20)
+    if pLeft:
+        plt.savefig(os.path.join(figurePath,"colorbarL_budget_deficit.png"))
+    else:
+        plt.savefig(os.path.join(figurePath,"colorbar_budget_deficit.png"))
+    plt.clf()
+    plt.close()
+
+
+# *********************************************************************************
+# meanPercentDC_ModeratelyWel (mean moderately well-drained soil)
+# *********************************************************************************
+
+def getNorm_dcModeratelyWell(df, printTruncation=True):
+    var = "meanPercentDC_ModeratelyWell"
+
+    lowerBound = 0
+    upperBound = 100
+
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
+    return norm
+
+def getM_dcModeratelyWell(cmap, df):
+    norm = getNorm_dcModeratelyWell(df)
+    m = cm.ScalarMappable(norm=norm, cmap=cmap)
+    return m
+
+def colorbar_dcModeratelyWell(cmap, df, save=False, pLeft=False):
+    fig, ax = plt.subplots(figsize=(3, 10))
+
+    norm = getNorm_dcModeratelyWell(df, printTruncation=True)
+    m = getM_dcModeratelyWell(cmap, df)
+    cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
+                                norm=norm,
+                                orientation='vertical')
+    cb1.set_label("% Moderately Well-drained Soil", size=15, weight='bold')
+    if pLeft:
+        fig.subplots_adjust(left=0.775)
+        ax.yaxis.set_label_position('left')
+        ax.yaxis.set_ticks_position('left')
+    else:
+        fig.subplots_adjust(right=0.25)
+
+    cb1.ax.tick_params(labelsize=20)
+    if pLeft:
+        plt.savefig(os.path.join(figurePath,"colorbarL_meanPercentDC_ModeratelyWell.png"))
+    else:
+        plt.savefig(os.path.join(figurePath,"colorbar_meanPercentDC_ModeratelyWell.png"))
+    plt.clf()
+    plt.close()
+
+
+# *********************************************************************************
+# cls3 (proportion deciduous broadleaf trees)
+# *********************************************************************************
+
+def getNorm_cls3(df, printTruncation=True):
+    var = "cls3"
+
+    lowerBound = 0
+    upperBound = 1
+
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
+    return norm
+
+def getM_cls3(cmap, df):
+    norm = getNorm_cls3(df)
+    m = cm.ScalarMappable(norm=norm, cmap=cmap)
+    return m
+
+def colorbar_M(cmap, df, save=False, pLeft=False):
+    fig, ax = plt.subplots(figsize=(3, 10))
+
+    norm = getNorm_cls3(df, printTruncation=True)
+    m = getM_cls3(cmap, df)
+    cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
+                                norm=norm,
+                                orientation='vertical')
+    cb1.set_label("Proportion Deciduous\nBroadleaf Trees", size=15, weight='bold')
+    if pLeft:
+        fig.subplots_adjust(left=0.775)
+        ax.yaxis.set_label_position('left')
+        ax.yaxis.set_ticks_position('left')
+    else:
+        fig.subplots_adjust(right=0.25)
+
+    cb1.ax.tick_params(labelsize=20)
+    if pLeft:
+        plt.savefig(os.path.join(figurePath,"colorbarL_cls3.png"))
+    else:
+        plt.savefig(os.path.join(figurePath,"colorbar_cls3.png"))
+    plt.clf()
+    plt.close()
+
+
+# *********************************************************************************
+# cls5 (proportion shrub)
+# *********************************************************************************
+
+def getNorm_cls5(df, printTruncation=True):
+    var = "cls5"
+
+    lowerBound = 0
+    upperBound = 1
+
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
+    return norm
+
+def getM_cls5(cmap, df):
+    norm = getNorm_cls5(df)
+    m = cm.ScalarMappable(norm=norm, cmap=cmap)
+    return m
+
+def colorbar_M(cmap, df, save=False, pLeft=False):
+    fig, ax = plt.subplots(figsize=(3, 10))
+
+    norm = getNorm_cls5(df, printTruncation=True)
+    m = getM_cls5(cmap, df)
+    cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
+                                norm=norm,
+                                orientation='vertical')
+    cb1.set_label("Proportion Shrubs", size=15, weight='bold')
+    if pLeft:
+        fig.subplots_adjust(left=0.775)
+        ax.yaxis.set_label_position('left')
+        ax.yaxis.set_ticks_position('left')
+    else:
+        fig.subplots_adjust(right=0.25)
+
+    cb1.ax.tick_params(labelsize=20)
+    if pLeft:
+        plt.savefig(os.path.join(figurePath,"colorbarL_cls5.png"))
+    else:
+        plt.savefig(os.path.join(figurePath,"colorbar_cls5.png"))
+    plt.clf()
+    plt.close()
+
+
+
 # *********************************************************************************
 # fuh's parameter
 # *********************************************************************************
@@ -98,12 +290,10 @@ def getNorm_M(df, printTruncation=True):
     #plt.hist(df[var], bins=50)
     #plt.show()
 
-    minVal = np.min(df[var]) 
-    maxVal = np.max(df[var]) 
-
-    norm = mpl.colors.Normalize(vmin=minVal, vmax=maxVal)
     lowerBound = np.min(df[var]) #FIXME: change this
     upperBound = np.max(df[var]) #FIXME: change this
+
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
         _printTruncation(var, lowerBound, upperBound, df)
 
@@ -149,9 +339,11 @@ def transform_maspMeanLog(array):
 
 def getNorm_maspMeanLog(df, printTruncation=True):
     var = "maspMean"
-    norm = mpl.colors.Normalize(vmin=2, vmax=np.max(transform_maspMeanLog(df[var])))
-    lowerBound = 2 #FIXME: change this
-    upperBound = np.inf #FIXME: change this
+
+    lowerBound = 2 
+    upperBound = np.max(transform_maspMeanLog(df[var]))
+
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
     if printTruncation:
         _printTruncation(var, lowerBound, upperBound, df)
 
@@ -191,7 +383,14 @@ def colorbar_maspMeanLog(cmap, df, save=False, pLeft=False):
 # *********************************************************************************
 
 def getNorm_matMean(df, printTruncation=True):
-    norm = mpl.colors.Normalize(vmin=np.min(df["matMean"]), vmax=np.max(df["matMean"]))
+    var = "matMean"
+    lowerBound = np.min(df[var])
+    upperBound = np.max(df[var])
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
     return norm
 
 def getM_matMean(cmap, df):
@@ -227,7 +426,14 @@ def colorbar_matMean(cmap, df, pLeft=False):
 # stream order (gord)
 # *********************************************************************************
 def getNorm_gord(df, printTruncation=True):
-    norm = mpl.colors.Normalize(vmin=np.min(df["gord"]), vmax=np.max(df["gord"]))
+    var = "gord"
+    lowerBound = np.min(df[var])
+    upperBound = np.max(df[var])
+    norm = mpl.colors.Normalize(vmin=lowerBound, vmax=upperBound)
+
+    if printTruncation:
+        _printTruncation(var, lowerBound, upperBound, df)
+
     return norm
 
 def getM_gord(cmap, df):
@@ -292,7 +498,7 @@ def colorbar_masdMean(cmap, df, pLeft=False):
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
-    cb1.set_label("mean annual specific discharge (L/s/km$^2$)", size=20, weight='bold')
+    cb1.set_label("mean annual specific discharge (L/day/km$^2$)", size=20, weight='bold')
     if pLeft:
         fig.subplots_adjust(left=0.775)
         ax.yaxis.set_label_position('left')
@@ -341,7 +547,7 @@ def colorbar_masdSlope(cmap, df, pLeft=False):
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
-    cb1.set_label("change in mean annual specific discharge (L/s/km$^2$ / year)", size=20, weight='bold') # FIXME: check the units
+    cb1.set_label("change in mean annual specific discharge (L/day/km$^2$ / year)", size=20, weight='bold') # FIXME: check the units
     if pLeft:
         fig.subplots_adjust(left=0.775)
         ax.yaxis.set_label_position('left')
@@ -886,6 +1092,16 @@ def getM(variable, cmap, df):
         function = getM_d_pSlope
     elif variable == "d_pPercentChange":
         function = getM_d_pPercentChange
+    elif variable == "m":
+        function = getM_M
+    elif variable == "budget_deficit":
+        function = getM_budget_deficit
+    elif variable == "cls3":
+        function = getM_cls3
+    elif variable == "cls5":
+        function = getM_cls5
+    elif variable == "meanPercentDC_ModeratelyWell":
+        function = getM_dcModeratelyWell
     else:
         print(variable, " not recognized as a variable that can be used to color catchments")
 
@@ -926,6 +1142,16 @@ def plotColorbar(variable, cmap, df, pLeft=False):
         colorbar_d_pSlope(cmap, df, pLeft=pLeft)
     elif variable == "d_pPercentChange":
         colorbar_d_pPercentChange(cmap, df, pLeft=pLeft)
+    elif variable == "m":
+        colorbar_M(cmap, df, pLeft=pLeft)
+    elif variable == "budget_deficit":
+        colorbar_budget_deficit(cmap, df, pLeft=pLeft)
+    elif variable == "cls3":
+        colorbar_cls3(cmap, df, pLeft=pLeft)
+    elif variable == "cls5":
+        colorbar_cls5(cmap, df, pLeft=pLeft)
+    elif variable == "meanPercentDC_ModeratelyWell":
+        colorbar_dcModeratelyWell(cmap, df, pLeft=pLeft)
 
     else:
         print(variable, " not recognized as a variable that can be used to color catchments")

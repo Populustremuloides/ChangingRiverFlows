@@ -51,6 +51,11 @@ def imputeMetadata():
     data = ddf.to_numpy().T
     data = np.array(data, dtype=np.float32)
     mask = torch.from_numpy(np.isnan(data))
+
+    # store the % nan values in the dataset
+    numNan = torch.sum(mask.flatten())
+    percentNan = 100 * (numNan.item() / (data.shape[0] * data.shape[1]))
+
     data = torch.from_numpy(data)
 
     targetCorrelations = torch.tensor(ddf.corr().to_numpy())
@@ -147,11 +152,11 @@ def imputeMetadata():
     # save a log of how the imputation process went
     logerPath = os.path.join(logPath, "log_imputingLog.txt")
     with open(logerPath, "w+") as logFile:
-        logFile.write("Loss = " + r"$\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$")
-        logFile.write("data were transformed to have mean zero and standard deviation of 1 prior to imputation.")
-        logFile.write("imputed values were initialized to the distribution mean.")
-        logFile.write("final loss: " + str(losses[-1]))
-    
+        logFile.write("Loss = " + r"$\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$" + "\n")
+        logFile.write("data were transformed to have mean zero and standard deviation of 1 prior to imputation.\n")
+        logFile.write("imputed values were initialized to the distribution mean.\n")
+        logFile.write("final loss: " + str(losses[-1]) + "\n")
+        logFile.write("percent Nan initially was: " + str(percentNan) + "\n") 
     # save the data
     with torch.no_grad():
         dataToAnalyzeCopy = dataToAnalyze.clone() # copy the original data

@@ -7,9 +7,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
-import torch
-import torch.optim as optim
-import torch.nn as nn
+from colorCatchments import getColors
 from scipy.stats import spearmanr
 import copy
 
@@ -128,8 +126,16 @@ def analyzeCorrelations():
         for i in range(1, 15):
             testAll(df, str(i), oFile, abso=True)
     '''
-def plotVar(df, var1, var2, log=True):
-    plt.scatter(x=df[var1], y=df[var2])
+def plotVar(df, var1, var2, colorVar="m", log=True, tag="real_values", abso=False):
+    sortIndices = np.argsort(df[colorVar])
+    colors = getColors
+    m = getM(variable=colorVar, cmap="seismic", df=df)
+    colors = getColors(colorVar, m, df)
+
+    if abso:
+        plt.scatter(x=np.array(df[var1])[sortIndices], y=np.array(np.abs(df[var2]))[sortIndices], c=np.array(colors)[sortIndices])
+    else:
+        plt.scatter(x=np.array(df[var1])[sortIndices], y=np.array(df[var2])[sortIndices], c=np.array(colors)[sortIndices])
     
     if var1 in predictablesToPretty.keys():
         plt.xlabel(predictablesToPretty[var1])
@@ -141,45 +147,50 @@ def plotVar(df, var1, var2, log=True):
         plt.xlabel(var1)
 
     if var2 in predictablesToPretty.keys():
-        plt.ylabel(predictablesToPretty[var2])
+        ylabel = predictablesToPretty[var2]
     elif var2 in predictorsToPretty.keys():
-        plt.ylabel(predictorsToPretty[var2])
+        ylabel = predictorsToPretty[var2]
     elif var2 in predictorsToPrettyPCA.keys():
-        plt.ylabel(predictorsToPrettyPCA[var2])
+        ylabel = predictorsToPrettyPCA[var2]
+    if abso:
+        ylabel = "absolute value of\n" + ylabel
+    plt.ylabel(ylabel)
     
     if log:
         plt.yscale("log")
         plt.xscale("log")
 
     plt.tight_layout()
-    plt.savefig(os.path.join(individualVarsPath, str(var1) + "_" + str(var2) + ".png"))
+    outPath = os.path.join(individualVarsPath, tag)
+    if not os.path.exists(outPath):
+        os.mkdir(outPath)
+    plt.savefig(os.path.join(outPath, str(var2) + "_" + str(var1) + ".png"))
     plt.clf() 
 
-
     
-def plotRelations():
+def plotRelations(colorVar="m"):
     ''' plot the top numToPlot predictors for each variable '''
     numToPlot = 5
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
     df = pd.read_csv(dataFilePath)
+    df = df[df["domfSlope"] < 30] 
 
     for predictable in list(predictablesToPretty.keys()):
         ldf = pd.read_csv(os.path.join(outputFilesPath, "individualCorrs_" + str(predictable) + ".csv"))
         for i in range(numToPlot):
             var = ldf["predictors"][i]
-            plotVar(df, var, predictable)
+            plotVar(df, var, predictable, colorVar, log=False, tag="real_values", abso=False)
 
 
     for predictable in list(predictablesToPretty.keys()):
         ldf = pd.read_csv(os.path.join(outputFilesPath, "individualCorrs_abs_" + str(predictable) + ".csv"))
         for i in range(numToPlot):
             var = ldf["absolute_predictors"][i]
-            plotVar(df, var, predictable)
+            plotVar(df, var, predictable, colorVar, log=False, tag="absolute_values", abso=True)
 
 
-
-def analyzeIndividualVars():
+def exploratoryPlots(colorVar="m"):
     plotFuh()
     analyzeCorrelations()
-    plotRelations()
+    plotRelations(colorVar=colorVar)
 

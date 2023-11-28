@@ -34,7 +34,8 @@ varToTitle = {
         "d_pMean":"Runoff Ratio",
         "d_pSlope":"Change in Runoff Ratio",
         "d_pPercentChange":"Percent Change in Runoff Ratio",
-        "m":"Fuh's Parameter"
+        "m":"Fuh's Parameter",
+        "budget_deficit":"Budget Deficit"
         }
 
 
@@ -52,7 +53,8 @@ varToTitleS = {
         "d_pMean":"MAP_RunoffRatioMean.png",
         "d_pSlope":"MAP_RunoffRatioSlope.png",
         "d_pPercentChange":"MAP_RunoffRatioPercentChange.png",
-        "m":"MAP_FuhsParameter.png"
+        "m":"MAP_FuhsParameter.png",
+        "budget_deficit":"MAP_budget_deficit.png"
         }
 
 
@@ -64,9 +66,11 @@ def plotVar(var, m, df, tag):
     ax.set_global()
     #ax.set_extent([-180,180,-58,83], crs=ccrs.PlateCarree())
     ax.add_feature(cfeature.COASTLINE)
+    
+    sortingIndices = np.argsort(df[var])
 
     colors = getColors(var, m, df)
-    plt.scatter(x=df["Longitude"], y=df["Latitude"], c=colors, s=5, alpha=0.9, transform=ccrs.PlateCarree())
+    plt.scatter(x=np.array(df["Longitude"])[sortingIndices], y=np.array(df["Latitude"])[sortingIndices], c=np.array(colors)[sortingIndices], s=5, alpha=0.9, transform=ccrs.PlateCarree())
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, tag + "_" + varToTitleS[var]), dpi=300)
     plt.clf()
@@ -83,8 +87,17 @@ def mapAll(tag):
 
     loop = tqdm(total=12)
     loop.set_description("mapping catchments")
-    cmap = seismic_r
+    cmap_r = seismic_r
+    cmap = seismic
+
+    # Budget Deficits
     
+    m = getM_budget_deficit(cmap, df)
+    plotVar("budget_deficit", m, df, tag)
+    colorbar_budget_deficit(cmap, df)
+    colorbar_budget_deficit(cmap, df, pLeft=True)
+    loop.update(1)
+
     # Fuh's Parameter
 
     m = getM_M(cmap, df)
@@ -95,42 +108,42 @@ def mapAll(tag):
 
     # runoff ratio
 
-    m = getM_d_pMean(cmap, df)
+    m = getM_d_pMean(cmap_r, df)
     plotVar("d_pMean", m, df, tag)
-    colorbar_d_pMean(cmap, df)
-    colorbar_d_pMean(cmap, df, pLeft=True)
+    colorbar_d_pMean(cmap_r, df)
+    colorbar_d_pMean(cmap_r, df, pLeft=True)
     loop.update(1)
 
-    m = getM_d_pSlope(cmap, df)
+    m = getM_d_pSlope(cmap_r, df)
     plotVar("d_pSlope", m, df, tag)
-    colorbar_d_pSlope(cmap, df)
-    colorbar_d_pSlope(cmap, df, pLeft=True)
+    colorbar_d_pSlope(cmap_r, df)
+    colorbar_d_pSlope(cmap_r, df, pLeft=True)
     loop.update(1)
 
-    m = getM_d_pPercentChange(cmap, df)
+    m = getM_d_pPercentChange(cmap_r, df)
     plotVar("d_pPercentChange", m, df, tag)
-    colorbar_d_pPercentChange(cmap, df)
-    colorbar_d_pPercentChange(cmap, df, pLeft=True)
+    colorbar_d_pPercentChange(cmap_r, df)
+    colorbar_d_pPercentChange(cmap_r, df, pLeft=True)
     loop.update(1)
 
     # mean annual specific discharge
 
-    m = getM_masdMean(cmap, df)
+    m = getM_masdMean(cmap_r, df)
     plotVar("masdMean", m, df, tag)
-    colorbar_masdMean(cmap, df)
-    colorbar_masdMean(cmap, df, pLeft=True)
+    colorbar_masdMean(cmap_r, df)
+    colorbar_masdMean(cmap_r, df, pLeft=True)
     loop.update(1)
 
-    m = getM_masdSlope(cmap, df)
+    m = getM_masdSlope(cmap_r, df)
     plotVar("masdSlope", m, df, tag)
-    colorbar_masdSlope(cmap, df)
-    colorbar_masdSlope(cmap, df, pLeft=True)
+    colorbar_masdSlope(cmap_r, df)
+    colorbar_masdSlope(cmap_r, df, pLeft=True)
     loop.update(1)
 
-    m = getM_masdPercentChange(cmap, df)
+    m = getM_masdPercentChange(cmap_r, df)
     plotVar("masdPercentChange", m, df, tag)
-    colorbar_masdPercentChange(cmap, df)
-    colorbar_masdPercentChange(cmap, df, pLeft=True)
+    colorbar_masdPercentChange(cmap_r, df)
+    colorbar_masdPercentChange(cmap_r, df, pLeft=True)
     loop.update(1)
 
     # period of mean flow

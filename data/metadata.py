@@ -91,7 +91,7 @@ predictablesToPretty = {
 # changes in flow vs changes in runoff ratio vs changes in pet / et ratios
 
 predictorsToPretty = {
-    "p_petSlope":"yearly change in precipitaion / potential evapotranspiration",
+    "p_petSlope":"yearly change in precipitation / potential evapotranspiration",
     "p_petPercentChange":"yearly change in precipitation / potential evapotranspiration",
     "dompSlope":"yearly change in day of mean precipitation",
     "maspSlope":"mean annual specific precipitation",
@@ -144,18 +144,18 @@ predictorsToPretty = {
     "pommtMean":"mean value of period of mean temperature",
     "pommetSlope":"yearly change in period of mean evapotranspiration",
     "m":"fuh's parameter",
-    "cls1":"percent evergreen deciduous trees",
-    "cls2":"percent braodleaf evergree trees",
-    "cls3":"percent deciduous broadleaf trees",
-    "cls4":"percent mixed other trees",
-    "cls5":"percent shrubs",
-    "cls6":"percent herbacious vegetation",
-    "cls7":"percent cultivated and managed vegetation",
-    "cls8":"percent regularly flooded vegetation",
-    "cls9":"percent urbat",
-    "cls10":"percent snow/ice",
-    "cls11":"percent barren",
-    "cls12":"percent open water",
+    "cls1":"proportion evergreen deciduous trees",
+    "cls2":"proportion braodleaf evergree trees",
+    "cls3":"proportion deciduous broadleaf trees",
+    "cls4":"proportion mixed other trees",
+    "cls5":"proportion shrubs",
+    "cls6":"proportion herbacious vegetation",
+    "cls7":"proportion cultivated and managed vegetation",
+    "cls8":"proportion regularly flooded vegetation",
+    "cls9":"proportion urbat",
+    "cls10":"proportion snow/ice",
+    "cls11":"proportion barren",
+    "cls12":"proportion open water",
 
     "Dam_SurfaceArea":"total surface area of dams",
     "Dam_Count":"total number of dams",
@@ -180,7 +180,7 @@ predictorsToPretty = {
 
 
 predictorsToPrettyPCA = {
-    "p_petSlope":"yearly change in precipitaion / potential evapotranspiration",
+    "p_petSlope":"yearly change in precipitation / potential evapotranspiration",
     "p_petPercentChange":"yearly change in precipitation / potential evapotranspiration",
     "dompSlope":"yearly change in day of mean precipitation",
     "maspSlope":"mean annual specific precipitation",

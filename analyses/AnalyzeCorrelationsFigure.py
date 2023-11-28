@@ -70,7 +70,9 @@ def groupColumns(df):
     df = (scores * df) / df.sum() # normalize to sum to 100 * coefficient of determination
     df = df.transpose()
 
-    return df
+    targetNames = list(df.index)
+
+    return df, scores, targetNames
 
 def barChartLinear(tag):
     linearDataPath = os.path.join(outputFilesPath, "regressionCoefficientsLinear_" + str(tag) + ".csv")
@@ -90,7 +92,7 @@ def barChartLinear(tag):
     linearDf.to_csv(os.path.join(outputFilesPath, "feature_importances_linear_" + str(tag) + ".csv"), index=False) # save the results
 
     linearDf = linearDf.dropna(axis=1)
-    linearDf = groupColumns(linearDf)
+    linearDf, scores, targetNames = groupColumns(linearDf)
     ax = linearDf.plot(kind="bar",stacked=True, figsize=(12.5,5), edgecolor="black")
     plt.ylabel("% contribution")
     handles, labels = ax.get_legend_handles_labels()
@@ -98,7 +100,7 @@ def barChartLinear(tag):
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Linear Model Decision Making")
     plt.ylim(-2,np.max(linearDf.transpose().sum()) + 2)    
-    plt.xlabel("")
+    plt.ylabel("")
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesLinear_" + str(tag) + ".png"))
     plt.clf()
@@ -111,7 +113,7 @@ def barChartNonlinear(tag):
     #nonlinearDf = nonlinearDf.drop("score", axis=1)
     for col in nonlinearDf.columns[2:]:
         nonlinearDf[col] = nonlinearDf[col].abs()
-
+    
     newTargets = []
     for target in nonlinearDf["target"]:
         newTargets.append(predictablesToPretty[target])
@@ -122,7 +124,7 @@ def barChartNonlinear(tag):
     nonlinearDf.to_csv(os.path.join(outputFilesPath, "feature_importances_nonlinear_" + str(tag) + ".csv"), index=False) # save the results
 
     nonlinearDf = nonlinearDf.dropna(axis=1)
-    nonlinearDf = groupColumns(nonlinearDf)
+    nonlinearDf, scores, targetNames = groupColumns(nonlinearDf)
     ax = nonlinearDf.plot(kind="bar",stacked=True, figsize=(12.5,5), edgecolor="black")
     plt.ylabel("% contribution")
     handles, labels = ax.get_legend_handles_labels()
@@ -130,41 +132,27 @@ def barChartNonlinear(tag):
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Random Forest Model Decision Making")
     plt.ylim(-2,np.max(nonlinearDf.transpose().sum()) + 2)
-    plt.xlabel("")
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesNonlinear_" + str(tag) + ".png"))
     plt.clf()
-
+    
+    return scores, targetNames
 
 
 def analyzeCorrelationsFigure():
     tags = ["raw","imputed"]
-
+    
+    tagScores = []
     for tag in tags:
         modelScoresFigure(tag)
         barChartLinear(tag)
-        barChartNonlinear(tag)
+        scores, labels = barChartNonlinear(tag)
+        tagScores.append(np.squeeze(scores))
+    improvements = tagScores[1] - tagScores[0]
 
 
-
-
-    # make the index be the treatment type *****************************************************
-
-
-
-    #print(linearDf)
-    #print(nonlinearDf)
-
-
-
-    # group into parts
-
-    # absoltue value
-    # mean values
-    # normalize
-
-    # create df
-
-    # plot
-
-
+    with open(os.path.join(logPath, "log_differencesPrePostImputing.txt"), "w+") as logFile:
+        logFile.writelines("Changes in mean model accuracy following data imputation:\n")
+        for i in range(len(labels)):
+            logFile.writelines(str(labels[i].replace("\n"," ")) + ": ")
+            logFile.writelines(str(improvements[i] / 100.) + "\n")

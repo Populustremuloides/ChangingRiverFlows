@@ -18,7 +18,14 @@ def u_getCatchmentName(fileName):
 
 def u_getDayOfMeanMagnitude(timeseries):
     dayInWaterYear = np.arange(timeseries.shape[0])
+
+    if np.min(timeseries) < 0:
+        timeseries = timeseries - np.min(timeseries) # make everything positive
+
     dayOfMeanMagnitude = np.sum(dayInWaterYear * timeseries) / np.sum(timeseries) #timeseries.shape[0]
+    if dayOfMeanMagnitude < 0:
+        print(timeseries)
+        input("here")
     return dayOfMeanMagnitude
 
 def u_getPeriodOfMeanMagnitude(timeseries):
