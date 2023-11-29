@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 def calculateBudgetDeficits():
     '''
-    Calculates the error between inputs and outputs: P - ET - Q 
+    Calculates the error between inputs and outputs: P - ET - Q
     '''
 
     dataDict = {"catchment":[],"budget_deficit":[], "percent_deficit":[]}
@@ -26,7 +26,7 @@ def calculateBudgetDeficits():
         precipMean = np.mean(df[precipVar])
         dischargeMean = np.mean(df[dischargeVar])
         deficit = precipMean - etMean - dischargeMean
-        percentDeficit = 100 * (deficit / dischargeMean)
+        percentDeficit = 100 * (deficit / precipMean)
 
         # store the newly harvested data
         dataDict["catchment"].append(cat)
@@ -38,6 +38,7 @@ def calculateBudgetDeficits():
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
+
     outPath = os.path.join(outputFilesPath, "timeseriesSummary_deficits.csv")
     outDf.to_csv(outPath, index=False)
 

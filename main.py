@@ -57,11 +57,11 @@ from analyses.AnalyzeCorrelationsFigure import analyzeCorrelationsFigure
 
 from analyses.AnalyzeCorrelationsPCA import analyzeCorrelationsPCA
 from analyses.AnalyzeCorrelationsLinearPCA import analyzeCorrelationsLinearPCA
-from analyses.AnalyzeCorrelationsNonLinearPCA import analyzeCorrelationsNonlinearPCA
+from analyses.AnalyzeCorrelationsNonlinearPCA import analyzeCorrelationsNonlinearPCA
 from analyses.AnalyzeCorrelationsFigurePCA import analyzeCorrelationsFigurePCA
 
 
-from analyses.MapAll import mapAll 
+from analyses.MapAll import mapAll
 from analyses.ExploratoryPlots import exploratoryPlots
 
 from analyses.ImputeChanges import imputeChanges
@@ -70,14 +70,15 @@ from analyses.plotDistributions import plotDistributions
 from analyses.CalculateSensitivities import calculateSensitivities
 
 def main():
+    runExploratoryAnalyses = False
+
 
     # adjust timeseries for ease of computation ***************************
     #combineTimeseries()
     #addLocalWaterYear()
-    
+
     # calculate budget deficits
     #calculateBudgetDeficits()
-
     # ratio analyses ******************************************************
     #analyzeD_P() # discharge / precip (runoff ratio)
     #analyzePET_ET() #
@@ -133,20 +134,20 @@ def main():
     #analyzeCorrelationsLinearPCA() # linear regression analysis
     #analyzeCorrelationsNonlinearPCA() # ml regression analysis
     #analyzeCorrelationsFigurePCA() # combine together into figures
-    
+
     # make table of highest individual correlations for each factor
     #makeTable(numToShow=5)
 
     # global figures
     #mapAll("raw")
-    imputeChanges()
+    #imputeChanges()
     #mapAll("imputedAll")
-    
+
     # plot changes
     #plotDistributions()
     #exploratoryPlots(colorVar="cls3") # other examples include `colorVar="m"`
     #calculateSensitivities()
-    
+
 
     # FIXME: calculate proportion NaN
 

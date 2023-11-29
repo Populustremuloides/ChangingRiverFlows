@@ -12,12 +12,12 @@ from tqdm import tqdm
 
 def imputeChanges():
     '''
-    use gradient descent to impute the changes in predictable variables 
-    in a way that does not alter the correlation or the covariance structure 
+    use gradient descent to impute the changes in predictable variables
+    in a way that does not alter the correlation or the covariance structure
     of the variables with each other.
     '''
 
-    numIterations = 50#00
+    numIterations = 5000
 
     # read in the metadata file
     df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv"))
@@ -53,7 +53,7 @@ def imputeChanges():
     percentNan = 100 * (numNan.item() / (data.shape[0] * data.shape[1]))
 
     data = torch.from_numpy(data)
-    
+
     targetCorrelations = torch.tensor(ddf.corr().to_numpy())
     #targetCovariances = torch.tensor(ddf.cov().to_numpy())
 

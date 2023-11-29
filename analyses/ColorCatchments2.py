@@ -116,32 +116,21 @@ def getM_budget_deficit(cmap, df):
     m = cm.ScalarMappable(norm=norm, cmap=cmap)
     return m
 
-def colorbar_budget_deficit(cmap, df, save=False, pLeft=False, ax=None):
-    if ax == None:
-        fig, ax = plt.subplots(figsize=(3, 10))
+def colorbar_budget_deficit(cmap, df, save=False, pLeft=False, ax=None, colors=None):
 
     norm = getNorm_budget_deficit(df, printTruncation=True)
     m = getM_budget_deficit(cmap, df)
+
     cb1 = mpl.colorbar.ColorbarBase(ax, cmap=cmap,
                                 norm=norm,
                                 orientation='vertical')
+    plt.show()
     cb1.set_label("Budget Deficit", size=15, weight='bold')
-    if ax == None:
-        if pLeft:
-            fig.subplots_adjust(left=0.775)
-            ax.yaxis.set_label_position('left')
-            ax.yaxis.set_ticks_position('left')
-        else:
-            fig.subplots_adjust(right=0.25)
-
-    cb1.ax.tick_params(labelsize=20)
     if pLeft:
-        plt.savefig(os.path.join(figurePath,"colorbarL_budget_deficit.png"))
-    else:
-        plt.savefig(os.path.join(figurePath,"colorbar_budget_deficit.png"))
-    plt.clf()
-    plt.close()
-
+        ax.yaxis.set_label_position('left')
+        ax.yaxis.set_ticks_position('left')
+    cb1.ax.tick_params(labelsize=20)
+    return cb1
 
 # *********************************************************************************
 # meanPercentDC_ModeratelyWel (mean moderately well-drained soil)

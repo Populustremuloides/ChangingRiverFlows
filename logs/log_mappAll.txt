@@ -1,0 +1,14 @@
+Budget Deficit (Liters) was 2.168615984405458 percent truncated when plotted
+Fuh's Parameter was 0.0 percent truncated when plotted
+Runoff Ratio was 0.8528265107212475 percent truncated when plotted
+Change in Runoff Ratio per Year was 0.21929824561403508 percent truncated when plotted
+Percent Change in Runoff Ratio per Year was 0.07309941520467836 percent truncated when plotted
+Mean Annual Specific Dicharge (L/d/km$^2$) was 0.4142300194931774 percent truncated when plotted
+Change in Mean Annual Specific Discharge $\Delta$(L/d/km$^2$) / year was 0.2680311890838206 percent truncated when plotted
+Percent Change in Mean Annual Specific Discharge was 0.04873294346978557 percent truncated when plotted
+Period of Mean Flow (days) was 0.09746588693957114 percent truncated when plotted
+Change in Period of Mean Flow (days / year) was 0.14619883040935672 percent truncated when plotted
+Day of Mean Flow was 0.12183235867446393 percent truncated when plotted
+Change in Day of Mean Flow (days / year) was 0.04873294346978557 percent truncated when plotted
+Day of Peak Flow (days) was 0.6335282651072125 percent truncated when plotted
+Change in Day of Peak Flow (days /year) was 0.07309941520467836 percent truncated when plotted

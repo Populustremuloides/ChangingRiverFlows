@@ -19,7 +19,7 @@ def plotFuh():
     #cmap = "seismic"
     xVar = "p_petMean"
     yVar = "d_pMean"
-    
+
     p_pets = np.linspace(0, np.max(df["p_petMean"]) + 0.5, 100)
     for w in [1, 90]:
         ys = np.power(1 + np.power(p_pets, -1 * w), 1. / w)  - np.power(p_pets, -1)
@@ -36,14 +36,14 @@ def plotFuh():
     plt.ylabel(predictorsToPretty[yVar])
     plt.legend()
     plt.savefig(os.path.join(figurePath, "fuhs_equation.png"))
-    plt.clf() 
+    plt.clf()
 
     plt.hist(df["m"], density=True, bins=50)
     plt.title("Distribution of Fuh's Parameter")
     plt.xlabel("m value")
     plt.ylabel("density")
     plt.savefig(os.path.join(figurePath, "fuhs_distribution.png"))
-    plt.clf() 
+    plt.clf()
 
 
 
@@ -75,7 +75,7 @@ def testAll(df, var1, oFile, abso):
     testVar(df, var1, "domfSlope", oFile, abso=True)
     testVar(df, var1, "dopfSlope", oFile, abso=True)
     testVar(df, var1, "pommfSlope", oFile, abso=True)
-    newLine(oFile) 
+    newLine(oFile)
 
 def analyzeCorrelations():
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
@@ -126,17 +126,23 @@ def analyzeCorrelations():
         for i in range(1, 15):
             testAll(df, str(i), oFile, abso=True)
     '''
-def plotVar(df, var1, var2, colorVar="m", log=True, tag="real_values", abso=False):
+def plotVar(df, var1, var2, colorVar="m", lowerBound=0, upperBound=1, log=True, tag="real_values", abso=False):
     sortIndices = np.argsort(df[colorVar])
     colors = getColors
-    m = getM(variable=colorVar, cmap="seismic", df=df)
-    colors = getColors(colorVar, m, df)
+    #m = getM(variable=colorVar, cmap="seismic", df=df)
+    colors = np.array(df[colorVar]) #getColors(colorVar, m, df)
+    lowerMask = colors < lowerBound
+    upperMask = colors > upperBound
+    colors[upperMask] = upperBound
+    colors[lowerMask] = lowerBound
+    percentTruncated = 100. * ((np.sum(upperMask) + np.sum(lowerMask)) / lowerMask.shape[0])
+
 
     if abso:
         plt.scatter(x=np.array(df[var1])[sortIndices], y=np.array(np.abs(df[var2]))[sortIndices], c=np.array(colors)[sortIndices])
     else:
         plt.scatter(x=np.array(df[var1])[sortIndices], y=np.array(df[var2])[sortIndices], c=np.array(colors)[sortIndices])
-    
+
     if var1 in predictablesToPretty.keys():
         plt.xlabel(predictablesToPretty[var1])
     elif var1 in predictorsToPretty.keys():
@@ -155,7 +161,7 @@ def plotVar(df, var1, var2, colorVar="m", log=True, tag="real_values", abso=Fals
     if abso:
         ylabel = "absolute value of\n" + ylabel
     plt.ylabel(ylabel)
-    
+
     if log:
         plt.yscale("log")
         plt.xscale("log")
@@ -165,15 +171,15 @@ def plotVar(df, var1, var2, colorVar="m", log=True, tag="real_values", abso=Fals
     if not os.path.exists(outPath):
         os.mkdir(outPath)
     plt.savefig(os.path.join(outPath, str(var2) + "_" + str(var1) + ".png"))
-    plt.clf() 
+    plt.clf()
 
-    
+
 def plotRelations(colorVar="m"):
     ''' plot the top numToPlot predictors for each variable '''
     numToPlot = 5
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
     df = pd.read_csv(dataFilePath)
-    df = df[df["domfSlope"] < 30] 
+    df = df[df["domfSlope"] < 30]
 
     for predictable in list(predictablesToPretty.keys()):
         ldf = pd.read_csv(os.path.join(outputFilesPath, "individualCorrs_" + str(predictable) + ".csv"))

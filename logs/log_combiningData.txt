@@ -1,0 +1,2 @@
+size of df prior to removal of rows with < 5 predictor features: 4104
+size of df after removal of rows with < 5 predictor features: 3268

@@ -29,7 +29,7 @@ def analyzeMASD():
         df = df.groupby(waterYearVar).mean()
         masd = df[specificDischargeVar]
         waterYears = list(df.index)
-        
+
         slope = u_regressionFunction(waterYears, masd)
         mean = np.mean(masd)
 

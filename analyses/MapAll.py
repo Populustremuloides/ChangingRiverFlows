@@ -4,7 +4,8 @@ import matplotlib as mpl
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import pandas as pd
-from colorCatchments import *
+from ColorCatchments2 import *
+#from colorCatchments import *
 from tqdm import tqdm
 
 
@@ -22,20 +23,20 @@ PuOr = mpl.cm.get_cmap("PuOr")
 PuOr_r = mpl.cm.get_cmap("PuOr_r")
 
 varToTitle = {
-        "masdMean":"Mean Annual Specific Dicharge",
-        "masdSlope":"Change in Mean Annual Specific Discharge",
+        "masdMean":"Mean Annual Specific Dicharge (L/d/km$^2$)",
+        "masdSlope":"Change in Mean Annual Specific Discharge $\Delta$(L/d/km$^2$) / year",
         "masdPercentChange":"Percent Change in Mean Annual Specific Discharge",
         "domfMean":"Day of Mean Flow",
-        "domfSlope":"Change in Day of Mean Flow",
-        "dopfMean":"Day of Peak Flow",
-        "dopfSlope":"Change in Day of Peak Flow",
-        "pommfMean":"Period of Mean Flow",
-        "pommfSlope":"Change in Period of Mean Flow",
+        "domfSlope":"Change in Day of Mean Flow (days / year)",
+        "dopfMean":"Day of Peak Flow (days)",
+        "dopfSlope":"Change in Day of Peak Flow (days /year)",
+        "pommfMean":"Period of Mean Flow (days)",
+        "pommfSlope":"Change in Period of Mean Flow (days / year)",
         "d_pMean":"Runoff Ratio",
-        "d_pSlope":"Change in Runoff Ratio",
-        "d_pPercentChange":"Percent Change in Runoff Ratio",
+        "d_pSlope":"Change in Runoff Ratio per Year",
+        "d_pPercentChange":"Percent Change in Runoff Ratio per Year",
         "m":"Fuh's Parameter",
-        "budget_deficit":"Budget Deficit"
+        "budget_deficit":"Budget Deficit (Liters)"
         }
 
 
@@ -58,31 +59,37 @@ varToTitleS = {
         }
 
 
-def plotVar(var, m, df, tag):
+def plotVar(var, df, tag, lowerBound, upperBound, logFile, cmap="seismic"):
     # width, height
     fig = plt.figure(figsize=(9 * 2, 6 * 1.5))
 
     ax = fig.add_subplot(1,1,1, projection=ccrs.InterruptedGoodeHomolosine()) #Robinson()) #ccrs.PlateCarree())
     ax.set_global()
-    #ax.set_extent([-180,180,-58,83], crs=ccrs.PlateCarree())
     ax.add_feature(cfeature.COASTLINE)
-    
     sortingIndices = np.argsort(df[var])
 
-    colors = getColors(var, m, df)
-    plt.scatter(x=np.array(df["Longitude"])[sortingIndices], y=np.array(df["Latitude"])[sortingIndices], c=np.array(colors)[sortingIndices], s=5, alpha=0.9, transform=ccrs.PlateCarree())
+    # truncate the data for visualization purposes
+    colors = np.array(df[var])
+    minMask = colors < lowerBound
+    colors[minMask] = lowerBound
+    maxMask = colors > upperBound
+    colors[maxMask] = upperBound
+    percentTruncated = 100. * ((np.sum(maxMask) + np.sum(minMask)) / minMask.shape[0])
+    logFile.write(varToTitle[var] + " was " + str(percentTruncated) + " percent truncated when plotted\n")
+
+    colors = ax.scatter(x=np.array(df["Longitude"])[sortingIndices], y=np.array(df["Latitude"])[sortingIndices], c=colors[sortingIndices], cmap=cmap, s=5, alpha=0.9, transform=ccrs.PlateCarree())
+    cbar = fig.colorbar(colors, ax=ax, orientation="vertical")
+    cbar.set_label(varToTitle[var], fontsize=15)
+    cbar.ax.tick_params(labelsize=15)
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, tag + "_" + varToTitleS[var]), dpi=300)
-    plt.clf()
-    plt.close()
-
 
 def mapAll(tag):
 
     dfPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")
     if os.path.exists(dfPath):
         df = pd.read_csv(dfPath)
-    
+
     df = df[~df["d_pSlope"].isna()]
 
     loop = tqdm(total=12)
@@ -91,100 +98,86 @@ def mapAll(tag):
     cmap = seismic
 
     # Budget Deficits
-    
-    m = getM_budget_deficit(cmap, df)
-    plotVar("budget_deficit", m, df, tag)
-    colorbar_budget_deficit(cmap, df)
-    colorbar_budget_deficit(cmap, df, pLeft=True)
-    loop.update(1)
+    with open(os.path.join(logPath, "log_mappAll.txt"), "w+") as logFile:
 
-    # Fuh's Parameter
+        lowerBound = np.min(np.sort(df["budget_deficit"])[50:])
+        upperBound = -1 * lowerBound
+        plotVar("budget_deficit", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_M(cmap, df)
-    plotVar("m", m, df, tag)
-    colorbar_M(cmap, df)
-    colorbar_M(cmap, df, pLeft=True)
-    loop.update(1)
+        lowerBound = 0
+        upperBound = 10
+        plotVar("m", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile)
+        loop.update(1)
 
-    # runoff ratio
+        # runoff ratio
+        lowerBound = 0
+        upperBound = 1
+        plotVar("d_pMean", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_d_pMean(cmap_r, df)
-    plotVar("d_pMean", m, df, tag)
-    colorbar_d_pMean(cmap_r, df)
-    colorbar_d_pMean(cmap_r, df, pLeft=True)
-    loop.update(1)
 
-    m = getM_d_pSlope(cmap_r, df)
-    plotVar("d_pSlope", m, df, tag)
-    colorbar_d_pSlope(cmap_r, df)
-    colorbar_d_pSlope(cmap_r, df, pLeft=True)
-    loop.update(1)
+        lowerBound = -0.03
+        upperBound = 0.03
+        plotVar("d_pSlope", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_d_pPercentChange(cmap_r, df)
-    plotVar("d_pPercentChange", m, df, tag)
-    colorbar_d_pPercentChange(cmap_r, df)
-    colorbar_d_pPercentChange(cmap_r, df, pLeft=True)
-    loop.update(1)
+        lowerBound = -10
+        upperBound = 10
+        plotVar("d_pPercentChange", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    # mean annual specific discharge
 
-    m = getM_masdMean(cmap_r, df)
-    plotVar("masdMean", m, df, tag)
-    colorbar_masdMean(cmap_r, df)
-    colorbar_masdMean(cmap_r, df, pLeft=True)
-    loop.update(1)
+        # mean annual specific discharge
+        lowerBound = 0
+        upperBound = 5e6
+        plotVar("masdMean", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_masdSlope(cmap_r, df)
-    plotVar("masdSlope", m, df, tag)
-    colorbar_masdSlope(cmap_r, df)
-    colorbar_masdSlope(cmap_r, df, pLeft=True)
-    loop.update(1)
+        lowerBound = -1e5
+        upperBound = 1e5
+        plotVar("masdSlope", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_masdPercentChange(cmap_r, df)
-    plotVar("masdPercentChange", m, df, tag)
-    colorbar_masdPercentChange(cmap_r, df)
-    colorbar_masdPercentChange(cmap_r, df, pLeft=True)
-    loop.update(1)
+        lowerBound = -10
+        upperBound = 12
+        plotVar("masdPercentChange", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    # period of mean flow
+        # period of mean flow
 
-    m = getM_pommfMean(cmap, df)
-    plotVar("pommfMean", m, df, tag)
-    colorbar_pommfMean(cmap, df)
-    colorbar_pommfMean(cmap, df, pLeft=True)
-    loop.update(1)
+        lowerBound = 20
+        upperBound = 300
+        plotVar("pommfMean", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_pommfSlope(cmap, df)
-    plotVar("pommfSlope", m, df, tag)
-    colorbar_pommfSlope(cmap, df)
-    colorbar_pommfSlope(cmap, df, pLeft=True)
-    loop.update(1)
 
-    # day of mean flow
+        lowerBound = -10
+        upperBound = 10
+        plotVar("pommfSlope", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r")
+        loop.update(1)
 
-    m = getM_domfMean(cmap, df)
-    plotVar("domfMean", m, df, tag)
-    colorbar_domfMean(cmap, df)
-    colorbar_domfMean(cmap, df, pLeft=True)
-    loop.update(1)
 
-    m = getM_domfSlope(cmap, df)
-    plotVar("domfSlope", m, df, tag)
-    colorbar_domfSlope(cmap, df)
-    colorbar_domfSlope(cmap, df, pLeft=True)
-    loop.update(1)
+        # day of mean flow
 
-    # day of peak flow
+        lowerBound = 110
+        upperBound = 260
+        plotVar("domfMean", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile)
+        loop.update(1)
 
-    m = getM_dopfMean(cmap, df)
-    plotVar("dopfMean", m, df, tag)
-    colorbar_dopfMean(cmap, df)
-    colorbar_dopfMean(cmap, df, pLeft=True)
-    loop.update(1)
+        lowerBound = -9
+        upperBound = 9
+        plotVar("domfSlope", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile)
+        loop.update(1)
 
-    m = getM_dopfSlope(cmap, df)
-    plotVar("dopfSlope", m, df, tag)
-    colorbar_dopfSlope(cmap, df)
-    colorbar_dopfSlope(cmap, df, pLeft=True)
-    loop.update(1)
+        # day of peak flow
 
+        lowerBound = 100
+        upperBound = 300
+        plotVar("dopfMean", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile)
+        loop.update(1)
+
+        lowerBound = -20
+        upperBound = 20
+        plotVar("dopfSlope", df, tag, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile)
+        loop.update(1)
