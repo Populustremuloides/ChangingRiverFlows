@@ -14,6 +14,29 @@ import math
 from matplotlib.patches import Rectangle
 from matplotlib.lines import Line2D
 
+varToTitle = {
+        "masdMean":"Mean Annual Specific Dicharge (L/d/km$^2$)",
+        "masdSlope":"Change in Mean Annual Specific Discharge $\Delta$(L/d/km$^2$) / year",
+        "masdPercentChange":"Percent Change in Mean Annual Specific Discharge",
+        "domfMean":"Day of Mean Flow",
+        "domfSlope":"Change in Day of Mean Flow (days / year)",
+        "dopfMean":"Day of Peak Flow (days)",
+        "dopfSlope":"Change in Day of Peak Flow (days /year)",
+        "pommfMean":"Period of Mean Flow (days)",
+        "pommfSlope":"Change in Period of Mean Flow (days / year)",
+        "d_pMean":"Runoff Ratio",
+        "d_pSlope":"Change in Runoff Ratio per Year",
+        "d_pPercentChange":"Percent Change in Runoff Ratio per Year",
+        "m":"Fuh's Parameter",
+        "budget_deficit":"Budget Deficit (Liters)",
+        "percent_deficit":"% Budget Deficit",
+        "cls5":"Proportion Shrubs",
+        "cls3":"Proportion Deciduous Broadleaf Cover",
+        "meanPercentDC_ModeratelyWell":"Percent Moderately Well-draining Soil"
+        }
+
+
+
 def getRegressors(ldf, udf, var1, var2):
     xl = np.expand_dims(ldf[var1].to_numpy(), axis=1)
     yl = ldf[var2].to_numpy()
@@ -26,10 +49,9 @@ def getRegressors(ldf, udf, var1, var2):
     return reg1, reg2
 
 
-def getPVal(df, var1, var2, var3, threshold):
+def getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations):
 
     # determine lengths of lower/upper bound datasets
-    numIterations = 1000
     ldf = df[df[var3] < threshold]
     udf = df[df[var3] >= threshold]
     lenLower = len(ldf[ldf.columns[0]])
@@ -40,10 +62,10 @@ def getPVal(df, var1, var2, var3, threshold):
     realDiff = abs(reg1.coef_[0] - reg2.coef_[0])
 
     # randomly sample the df according to the sizes used in getSensitivity
-    diffs = np.zeros(numIterations)
+    diffs = np.zeros(int(numIterations))
     indices = np.arange(len(df[df.columns[0]]))
     loop = tqdm(total=numIterations)
-    for i in range(numIterations):
+    for i in range(int(numIterations)):
         np.random.shuffle(indices) # shuffle the indices
         lowerMask = indices < lenLower
         ldf = df[lowerMask]
@@ -56,7 +78,7 @@ def getPVal(df, var1, var2, var3, threshold):
         loop.update(1)
     
     # create a histogram using those outputs
-    N, bins, patches = plt.hist(diffs, bins=100, density=False)
+    N, bins, patches = axs[1].hist(diffs, bins=100, density=False)
     maxHeight = np.max(N)
 
     diffs = np.sort(diffs)
@@ -86,17 +108,19 @@ def getPVal(df, var1, var2, var3, threshold):
             ]
 
     labels= ["<95%","<97.5%","<100%","actual absolute difference"]
-    plt.legend(handles, labels)
-    plt.vlines(x=realDiff, ymin=0, ymax=maxHeight, color="k")
-    plt.xlabel("absolute difference in slope of\n\"" + predictablesToPretty[var2].replace("\n","") + "\"\nto\n\"" + predictorsToPretty[var1] + "\"", fontsize=11) 
-    plt.ylabel("count", fontsize=11)
-    plt.title("Random Differences in Slopes Compared to Thresholding by\n\"" + predictorsToPretty[var3] + "\"")
-    plt.gca().spines["top"].set_visible(False)  
+    axs[1].legend(handles, labels)
+    axs[1].vlines(x=realDiff, ymin=0, ymax=maxHeight, color="k")
+    #ax.set_xlabel("absolute difference in slope of\n\"" + predictablesToPretty[var2].replace("\n"," ") + "\"\nto\n\"" + predictorsToPretty[var1] + "\"", fontsize=11) 
+    axs[1].set_xlabel("absolute difference in slope given a random selection of catchments", fontsize=11) 
+    axs[1].set_ylabel("count", fontsize=11)
+    #ax.set_title("Random Differences in Slopes Compared to Thresholding by\n\"" + predictorsToPretty[var3] + "\"")
+    #axs[1].set_title("Empirical Probability Distribution of Differences in Slopes")
     plt.tight_layout()
-    plt.gca().spines["right"].set_visible(False)
-    plt.savefig(os.path.join(figurePath, "p_value_plot_" + str(var2) + "_" + str(var1) + "_" + str(var3) + ".png"))
+    plt.grid()
+    plt.savefig(os.path.join(figurePath, "sensitivity_plot_" + str(var2) + "_" + str(var1) + "_" + str(var3) + ".png"), dpi=300)
+    #plt.show()
     plt.clf()
-    #plt.close()
+    plt.close()
     
     # calculate the p-value
     numGreater = float(np.sum(diffs > realDiff))
@@ -120,23 +144,37 @@ def getSensitivity(df, var1, var2, var3, threshold):
 
     return reg1.coef_, reg2.coef_, coefDetermination1, coefDetermination2, reg1, reg2
 
-def plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False):
+def plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=0, upperBound=1):
 
     sortIndices = np.argsort(df[var3])
-    colors = getColors
-    m = getM(variable=var3, cmap="seismic", df=df)
-    colors = getColors(var3, m, df)
-
-    plt.scatter(x=np.array(df[var1])[sortIndices], y=np.array(df[var2])[sortIndices], c=np.array(colors)[sortIndices])
+    #colors = getColors
+    #m = getM(variable=var3, cmap="seismic", df=df)
+    #colors = getColors(var3, m, df)
     
+    norm = plt.Normalize(vmin=lowerBound, vmax=upperBound)
+    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(16,4))
+    scatter = axs[0].scatter(x=np.array(df[var1])[sortIndices], y=np.array(df[var2])[sortIndices], c=np.array(df[var3])[sortIndices], cmap="seismic", norm=norm)
+    cbar = fig.colorbar(scatter, ax=axs[0], orientation="vertical")
+
+    cbar.set_label(varToTitle[var3], fontsize=13)
+    cbar.ax.tick_params(labelsize=13)
+    legend = plt.legend()
+    for label in legend.get_texts():
+        label.set_fontsize(13)  # Set the desired fontsize (e.g., 12)
+
+        # Adjust the marker size for legend handles (icons)
+        for handle in legend.legendHandles:
+                handle.set_sizes([40])
+ 
+
     if var1 in predictablesToPretty.keys():
-        plt.xlabel(predictablesToPretty[var1])
+        axs[0].set_xlabel(predictablesToPretty[var1])
     elif var1 in predictorsToPretty.keys():
-        plt.xlabel(predictorsToPretty[var1])
+        axs[0].set_xlabel(predictorsToPretty[var1])
     elif var1 in predictorsToPrettyPCA.keys():
-        plt.xlabel(predictorsToPrettyPCA[var1])
+        axs[0].set_xlabel(predictorsToPrettyPCA[var1])
     else:
-        plt.xlabel(var1)
+        axs[0].set_xlabel(var1)
 
     if var2 in predictablesToPretty.keys():
         ylabel = predictablesToPretty[var2]
@@ -144,89 +182,136 @@ def plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False):
         ylabel = predictorsToPretty[var2]
     elif var2 in predictorsToPrettyPCA.keys():
         ylabel = predictorsToPrettyPCA[var2]
-    plt.ylabel(ylabel)
+    axs[0].set_ylabel(ylabel.replace("\n"," "))
     
     if log:
-        plt.yscale("log")
-        plt.xscale("log")
+        axs[0].yscale("log")
+        axs[0].xscale("log")
     
     var1Range = np.expand_dims(np.linspace(np.min(df[var1]), np.max(df[var1])), axis=1)
     lowerPreds = reg1.predict(var1Range)
     upperPreds = reg2.predict(var1Range)
     
-    plt.plot(var1Range, lowerPreds, c="b", label=predictorsToPretty[var3] + " < " + str(threshold))
-    plt.plot(var1Range, upperPreds, c="r", label=predictorsToPretty[var3] + " >= " + str(threshold))
-    plt.legend()
-    plt.ylim(np.min(df[var2]) - (np.std(df[var2]) / 3.), np.max(df[var2]) + - (np.std(df[var2]) / 3.))
-    plt.tight_layout()
-    plt.savefig(os.path.join(figurePath, str(var2) + "_" + str(var1) + "_" + str(var3) + ".png"))
-    plt.clf() 
+    axs[0].plot(var1Range, lowerPreds, c="b", label=predictorsToPretty[var3] + " < " + str(threshold))
+    axs[0].plot(var1Range, upperPreds, c="r", label=predictorsToPretty[var3] + " >= " + str(threshold))
+    axs[0].legend()
+    axs[0].set_ylim(np.min(df[var2]) - (np.std(df[var2]) / 3.), np.max(df[var2]) + - (np.std(df[var2]) / 3.))
+    #axs[0].tight_layout()
+    axs[0].grid()
+
+    return fig, axs
+    #plt.savefig(os.path.join(figurePath, str(var2) + "_" + str(var1) + "_" + str(var3) + ".png"))
+    #plt.clf()
+    #plt.close()
 
 
 def writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval):
-        oFile.writelines("var1: " + str(var1) + ": " + predictorsToPretty[var1] + "\n")
-        oFile.writelines("var2: " + str(var2) + ": " + predictablesToPretty[var2] + "\n")
-        oFile.writelines("var3: " + str(var3) + ": " + predictorsToPretty[var3] + "\n")
+        slopeU = slopeU[0]
+        slopeL = slopeL[0]
+
+        oFile.writelines("var1: " + str(var1) + ": " + predictorsToPretty[var1].replace("\n", " ") + "\n")
+        oFile.writelines("var2: " + str(var2) + ": " + predictablesToPretty[var2].replace("\n"," ") + "\n")
+        oFile.writelines("var3: " + str(var3) + ": " + predictorsToPretty[var3].replace("\n"," ") + "\n")
         oFile.writelines("threshold: " + str(threshold) + "\n")
         oFile.writelines("p-value of the slopes being this different: " + str(pval) + "\n")
         oFile.writelines("slope of lower group: " + str(slopeL) + "\n")
         oFile.writelines("slope of upper group: " + str(slopeU) + "\n")
+        oFile.writelines("lower group / upper group: " + str(slopeL / slopeU) + "\n")
+        oFile.writelines("upper group / lower group: " + str(slopeU / slopeL) + "\n")
+        oFile.writelines("(lower group - upper group) / lower group: " + str((slopeL - slopeU)/ slopeL) + "\n")
+        oFile.writelines("(lower group - upper group) / upper group: " + str((slopeL - slopeU)/ slopeU) + "\n")
+        oFile.writelines("(upper group - lower group) / lower group: " + str((slopeU - slopeL)/ slopeL) + "\n")
+        oFile.writelines("(upper group - lower group) / upper group: " + str((slopeU - slopeL)/ slopeU) + "\n")
         oFile.writelines("coefficient of determination of lower group: " + str(rSquaredL) + "\n")
         oFile.writelines("coefficient of determination of upper group: " + str(rSquaredU) + "\n")
         oFile.writelines("***************************************\n\n")
 
 
-def calculateSensitivities():
+def calculateSensitivities(numIterations=1e2):
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv")
     df = pd.read_csv(dataFilePath)
-    df = df[~df["d_pSlope"].isna()]
-    df = df[df["pet_pSlope"] > -0.2] # remove outliers
-    df = df[df["dompSlope"] < 10] # remove outliers
-    df = df.dropna()
+    df = df[df["domfSlope"] < 30] # remove a single outlier
+    df = df[~df["pommfSlope"].isna()]
+    #df = df.dropna()
 
     with open(os.path.join(outputFilesPath, "sensitivities.txt"), "w+") as oFile:
+        var1 = "maspPercentChange"
+        var2 = "masdPercentChange"
+        var3 = "m"
+        threshold = 6
+        lowerBound = 0
+        upperBound = 8
+        slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
+        writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
+
+        
         var1 = "p_petSlope"
         var2 = "pommfSlope"
         var3 = "meanPercentDC_ModeratelyWell"
         threshold = 0.5
+        lowerBound = 0
+        upperBound = 100
         slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
-        pval = getPVal(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
         writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
-        plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False)
 
         var1 = "dompSlope"
         var2 = "domfSlope"
         var3 = "cls5"
         threshold = 0.05
+        lowerBound = 0
+        upperBound = 1
         slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
-        pval = getPVal(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
         writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
-        plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False)
 
         var1 = "dompSlope"
         var2 = "domfSlope"
         var3 = "cls3"
         threshold = 0.05
+        lowerBound = 0
+        upperBound = 1
         slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
-        pval = getPVal(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
         writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
-        plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False)
 
         var1 = "pet_pSlope"
         var2 = "d_pPercentChange"
         var3 = "m"
         threshold = 6
+        lowerBound = 0
+        upperBound = 8
         slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
-        pval = getPVal(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
         writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
-        plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False)
 
+
+        var1 = "maspPercentChange"
+        var2 = "masdPercentChange"
+        var3 = "cls3"
+        threshold = 0.05
+        lowerBound = 0
+        upperBound = 1
+        slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
+        writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
 
         var1 = "maspPercentChange"
         var2 = "d_pPercentChange"
         var3 = "cls3"
         threshold = 0.05
+        lowerBound = 0
+        upperBound = 1
         slopeL, slopeU, rSquaredL, rSquaredU, reg1, reg2 = getSensitivity(df, var1, var2, var3, threshold)
-        pval = getPVal(df, var1, var2, var3, threshold)
+        fig, axs = plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False, lowerBound=lowerBound, upperBound=upperBound)
+        pval = getPVal(df, var1, var2, var3, threshold, fig, axs, numIterations)
         writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var3, threshold, pval)
-        plotVar(df, var1, var2, var3, reg1, reg2, threshold, log=False)
+
+

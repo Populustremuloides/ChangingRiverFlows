@@ -4,11 +4,67 @@ import pandas as pd
 from data.metadata import *
 import numpy as np
 from sklearn.impute import SimpleImputer
+from sklearn.ensemble import RandomForestRegressor
 import matplotlib.pyplot as plt
 import seaborn as sns
 from tqdm import tqdm
+import copy
+
 
 # read in the data
+
+def imputeRandomForest(df):
+# read in the metadata file
+    rfdf = copy.copy(df)    
+
+    # normalize
+    meanVals = rfdf.mean() 
+    stdVals = rfdf.std() 
+    rfdf = rfdf - meanVals
+    rfdf = rfdf / stdVals
+    
+    targetToMeanScore = {}
+
+    numRepeats = 10
+    for target in list(predictablesToPretty.keys()):
+        mask = np.array(rfdf[target].isna())
+        trainDf = rfdf[~mask]  
+        predictDf = rfdf[mask]  
+        
+        # separate out targets vs feeatures
+        yTrain = trainDf[target].to_numpy()
+        xTrain = trainDf[list(predictorsToPretty.keys())].to_numpy()
+
+        #yPred = predictDf[target].to_numpy()
+        xPred = predictDf[list(predictorsToPretty.keys())].to_numpy()
+
+        loop = tqdm(total=numRepeats) 
+        predictionValues = []
+        scores = []
+        for i in range(numRepeats):
+            # run the model
+            model = RandomForestRegressor()
+            model.fit(xTrain,yTrain)
+            scores.append(model.score(xTrain, yTrain))
+            predictionValues.append(model.predict(xPred))
+            loop.set_description("imputing " + target)
+            loop.update(1)
+        meanScore = np.mean(scores) 
+        targetToMeanScore[target] = [meanScore]
+
+        predictionValues = np.mean(np.array(predictionValues), axis=0)
+        originalValues = np.array(rfdf[target])
+        originalValues[mask] = predictionValues
+        rfdf[target] = originalValues
+    
+    # de-normalize
+    rfdf = rfdf * stdVals
+    rfdf = rfdf + meanVals
+    rfdf.to_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedRF.csv"))   
+    
+    # save the mean scores
+    scoresDf = pd.DataFrame.from_dict(targetToMeanScore)
+    scoresDf.to_csv(os.path.join(outputFilesPath, "rfImputationScores.csv"), index=False)
 
 def imputeChanges():
     '''
@@ -21,6 +77,11 @@ def imputeChanges():
 
     # read in the metadata file
     df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv"))
+
+    # impute via a random forest
+    imputeRandomForest(df)
+    
+    # impute via the correlation matrix
 
     #df = df.drop(df.columns[0], axis=1)
 
@@ -40,7 +101,6 @@ def imputeChanges():
     # save this values for later
     means = ddf.mean()
     stds = ddf.std()
-
 
     ddf = ddf - means #ddf.mean()
     ddf = ddf / stds #ddf.std()

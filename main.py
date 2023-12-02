@@ -57,12 +57,14 @@ from analyses.AnalyzeCorrelationsFigure import analyzeCorrelationsFigure
 
 from analyses.AnalyzeCorrelationsPCA import analyzeCorrelationsPCA
 from analyses.AnalyzeCorrelationsLinearPCA import analyzeCorrelationsLinearPCA
-from analyses.AnalyzeCorrelationsNonlinearPCA import analyzeCorrelationsNonlinearPCA
+from analyses.AnalyzeCorrelationsNonLinearPCA import analyzeCorrelationsNonlinearPCA
 from analyses.AnalyzeCorrelationsFigurePCA import analyzeCorrelationsFigurePCA
 
 
 from analyses.MapAll import mapAll
 from analyses.ExploratoryPlots import exploratoryPlots
+from analyses.PlotFuh import plotFuh
+from analyses.AnalyzeSpearmanCorrelations import analyzeSpearmanCorrelations
 
 from analyses.ImputeChanges import imputeChanges
 
@@ -70,8 +72,7 @@ from analyses.plotDistributions import plotDistributions
 from analyses.CalculateSensitivities import calculateSensitivities
 
 def main():
-    runExploratoryAnalyses = False
-
+    runExploratoryAnalyses = True
 
     # adjust timeseries for ease of computation ***************************
     #combineTimeseries()
@@ -79,6 +80,7 @@ def main():
 
     # calculate budget deficits
     #calculateBudgetDeficits()
+
     # ratio analyses ******************************************************
     #analyzeD_P() # discharge / precip (runoff ratio)
     #analyzePET_ET() #
@@ -121,35 +123,39 @@ def main():
     #combineResults()
     #computeM()
     #imputeMetadata()
-    #pcaMetadata()
+    #if runExploratoryAnalyses:
+    #    pcaMetadata()
 
     # Identify important variables
     #analyzeCorrelations() # visual representation connections between variables
     #analyzeCorrelationsLinear() # linear regression analysis
     #analyzeCorrelationsNonlinear() # ml regression analysis
     #analyzeCorrelationsFigure() # combine together into figures
-
-    # Identify important PCA variables
-    #analyzeCorrelationsPCA() #isual representation connections between variables
-    #analyzeCorrelationsLinearPCA() # linear regression analysis
-    #analyzeCorrelationsNonlinearPCA() # ml regression analysis
-    #analyzeCorrelationsFigurePCA() # combine together into figures
+    
+    #if runExploratoryAnalyses:
+        # Identify important PCA variables
+    #    analyzeCorrelationsPCA() #isual representation connections between variables
+    #    analyzeCorrelationsLinearPCA() # linear regression analysis
+    #    analyzeCorrelationsNonlinearPCA() # ml regression analysis
+    #    analyzeCorrelationsFigurePCA() # combine together into figures
 
     # make table of highest individual correlations for each factor
+    #analyzeSpearmanCorrelations()
     #makeTable(numToShow=5)
 
     # global figures
-    #mapAll("raw")
-    #imputeChanges()
-    #mapAll("imputedAll")
+    #imputeChanges() # impute missing predicted values
+    #mapAll()
+    #mapAll(randomForest=True)
 
     # plot changes
     #plotDistributions()
-    #exploratoryPlots(colorVar="cls3") # other examples include `colorVar="m"`
-    #calculateSensitivities()
-
-
-    # FIXME: calculate proportion NaN
+    #plotFuh()
+    #if runExploratoryAnalyses:
+    #    exploratoryPlots(colorVar="cls3", lowerBound=0, upperBound=1) # other examples include `colorVar="m"`, lowerbound=0, upperBound=10
+    calculateSensitivities(numIterations=1e1)
+    # FIXME: add % changes in sensitivity
+    # FIXME: make a world map of potential flow
 
     print("all analyses complete")
 

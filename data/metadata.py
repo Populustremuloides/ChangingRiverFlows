@@ -156,6 +156,11 @@ predictorsToPretty = {
     "cls10":"proportion snow/ice",
     "cls11":"proportion barren",
     "cls12":"proportion open water",
+    "forest":"proportion forest cover" ,
+    "otherveg":"proportion non-forest vegetative cover",
+    "precipcv":"precipitation coefficient of variation",
+    "water":"proportion open water",
+    "tempcv":"temperature coefficient of variation",
 
     "Dam_SurfaceArea":"total surface area of dams",
     "Dam_Count":"total number of dams",
@@ -175,7 +180,16 @@ predictorsToPretty = {
     "meanPercentDC_SomewhatExcessive":"percent somewhat excessively drained",
     "meanPercentDC_Poor":"percent poorly drained",
     "meanPercentDC_ModeratelyWell":"percent moderately well drained",
-    "meanPercentDC_Imperfectly":"percent imperfectly drained"
+    "meanPercentDC_Imperfectly":"percent imperfectly drained",
+
+    "budget_deficit":"water budget deficit",
+    "percent_deficit":"% water budget deficit",
+
+    "Latitude":"Latitude",
+    "Longitude":"Longitude",
+    "Catchment Area":"Catchment Area",
+    "Altitude":"Altitude",
+
 }
 
 
@@ -233,6 +247,9 @@ predictorsToPrettyPCA = {
     "pommtMean":"mean value of period of mean temperature",
     "pommetSlope":"yearly change in period of mean evapotranspiration",
     "m":"fuh's parameter",
+    "budget_deficit":"water budget deficit",
+    "percent_deficit":"% water budget deficit",
+
     "1":"Low Winter Temperature",
     "2":"Large Catchment Area and Dam Count",
     "3":"High Precipitation",
@@ -319,6 +336,11 @@ predictorsToCategory = {
     "cls10":"land cover",
     "cls11":"land cover",
     "cls12":"land cover",
+    "forest":"land cover",
+    "otherveg":"land cover",
+    "precipcv":"climate mean",
+    "water":"catchment area",
+    "tempcv":"climate mean",
 
     "Dam_SurfaceArea":"dams",
     "Dam_Count":"dams",
@@ -328,9 +350,9 @@ predictorsToCategory = {
     "MeanPopden_2015":"population density",
     "MeanHumanFootprint":"population density",
 
-    "gord":"size",
-    "PathLength":"size",
-    "TotalLength":"size",
+    "gord":"catchment area",
+    "PathLength":"catchment area",
+    "TotalLength":"catchment area",
     "gelev_m":"elevation",
     "drain_den":"drainage properties",
 
@@ -339,7 +361,16 @@ predictorsToCategory = {
     "meanPercentDC_SomewhatExcessive":"drainage properties",
     "meanPercentDC_Poor":"drainage properties",
     "meanPercentDC_ModeratelyWell":"drainage properties",
-    "meanPercentDC_Imperfectly":"drainage properties"
+    "meanPercentDC_Imperfectly":"drainage properties",
+
+    "budget_deficit":"budget deficit",
+    "percent_deficit":"budget deficit",
+
+    "Latitude":"Latitude",
+    "Longitude":"Longitude",
+    "Catchment Area":"catchment area",
+    "Altitude":"Altitude"
+
 }
 
 predictorsToCategoryPCA = {

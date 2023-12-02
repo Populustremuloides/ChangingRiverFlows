@@ -11,6 +11,11 @@ cls9
 cls10
 cls11
 cls12
+forest
+otherveg
+precipcv
+water
+tempcv
 Dam_SurfaceArea
 Dam_Count
 MeanPopden_2000

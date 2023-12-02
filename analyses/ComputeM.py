@@ -19,6 +19,7 @@ def computeM():
 
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df = pd.read_csv(dataFilePath)
+    print(df)
     mask =  np.array(~df["d_pMean"].isna())
 
     ws = torch.nn.Parameter(torch.rand(len(df[mask]["catchment"])) + 1) # initialize
@@ -28,7 +29,6 @@ def computeM():
     numEpochs = 10000
     loop = tqdm(total=numEpochs)
     
-    print("solving for m from Fuh's equation")
     losses = []
     for epoch in range(numEpochs):
         optimizer.zero_grad()
@@ -60,5 +60,3 @@ def computeM():
     df["m"] = newMs 
     outputPath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df.to_csv(outputPath, index=False)
-
-

@@ -2,6 +2,13 @@ import pandas as pd
 from data.metadata import *
 
 def makeTable(numToShow=5):
+
+    # compute all correlates
+    df = pd.read_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputed.csv"))
+
+
+    
+    # look at the top 5
     dataDict = {}
     for predictable in list(predictablesToPretty.keys()):
         colName = predictablesToPretty[predictable]
