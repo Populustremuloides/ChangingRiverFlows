@@ -25,8 +25,8 @@ PuOr_r = mpl.cm.get_cmap("PuOr_r")
 
 varToTitle = {
         "masdMean":"Mean Annual Specific Dicharge (L/d/km$^2$)",
-        "masdSlope":"Change in Mean Annual Specific Discharge $\Delta$(L/d/km$^2$) / year",
-        "masdPercentChange":"Percent Change in Mean Annual Specific Discharge",
+        "masdSlope":"Change in Mean Annual\nSpecific Discharge (L/d/km$^2$) / year",
+        "masdPercentChange":"Percent Change in Mean\nAnnual Specific Discharge",
         "domfMean":"Day of Mean Flow",
         "domfSlope":"Change in Day of Mean Flow (days / year)",
         "dopfMean":"Day of Peak Flow (days)",
@@ -35,7 +35,7 @@ varToTitle = {
         "pommfSlope":"Change in Period of Mean Flow (days / year)",
         "d_pMean":"Runoff Ratio",
         "d_pSlope":"Change in Runoff Ratio per Year",
-        "d_pPercentChange":"Percent Change in Runoff Ratio per Year",
+        "d_pPercentChange":"Percent Change in\nRunoff Ratio per Year",
         "m":"Fuh's Parameter",
         "budget_deficit":"Budget Deficit (Liters)",
         "percent_deficit":"% Budget Deficit"
@@ -84,8 +84,8 @@ def plotVar(var, df, dfAll, lowerBound, upperBound, logFile, cmap="seismic", ran
     scatter = ax.scatter(x=np.array(df["Longitude"])[sortingIndices], y=np.array(df["Latitude"])[sortingIndices], c=np.array(df[var])[sortingIndices], cmap=cmap, norm=norm, s=5, alpha=0.9, transform=ccrs.PlateCarree(), label="measured")
     
     cbar = fig.colorbar(scatter, ax=ax, orientation="vertical")
-    cbar.set_label(varToTitle[var], fontsize=15)
-    cbar.ax.tick_params(labelsize=15)
+    cbar.set_label(varToTitle[var], fontsize=25)
+    cbar.ax.tick_params(labelsize=25)
     legend = plt.legend()
     for label in legend.get_texts():
         label.set_fontsize(16)  # Set the desired fontsize (e.g., 12)

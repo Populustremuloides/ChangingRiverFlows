@@ -103,7 +103,7 @@ def plotFuh():
     #cbar.ax.tick_params(labelsize=12)
     axs[1].set_title("P - ET (potential discharge)")
     axs[1].set_xlabel("Catchment Area")
-    axs[1].set_ylabel("Liters per Square Kilometer", fontsize=12)
+    axs[1].set_ylabel("Liters per Square Kilometer / Year", fontsize=12)
     axs[1].set_xscale("log")
     axs[1].set_ylim(-4e6, 8e6)
     axs[1].grid()
@@ -114,7 +114,7 @@ def plotFuh():
     cbar.ax.tick_params(labelsize=12)
     axs[2].set_title("Q (discharge)")
     axs[2].set_xlabel("Catchment Area")
-    axs[2].set_ylabel("Liters per Square Kilometer", fontsize=12)
+    axs[2].set_ylabel("Liters per Square Kilometer / Year", fontsize=12)
     axs[2].set_xscale("log")
     axs[2].grid()
     

@@ -38,6 +38,10 @@ def calculateBudgetDeficits():
 
     # save the newly harvested data
     outDf = pd.DataFrame.from_dict(dataDict)
+    
+    with open(os.path.join(logPath, "log_budgetDeficits.txt"), "w+") as logFile:
+        logFile.writelines("The median % budget deficit value was: " + str(np.median(outDf["percent_deficit"][~outDf["percent_deficit"].isna()])) + "\n")
+        logFile.writelines("The median budget deficit value was: " + str(np.median(outDf["budget_deficit"][~outDf["percent_deficit"].isna()])))
 
     outPath = os.path.join(outputFilesPath, "timeseriesSummary_deficits.csv")
     outDf.to_csv(outPath, index=False)

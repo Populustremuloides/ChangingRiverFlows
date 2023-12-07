@@ -15,7 +15,20 @@ import copy
 
 def imputeRandomForest(df):
 # read in the metadata file
-    rfdf = copy.copy(df)    
+    rfdf = copy.copy(df) 
+    dropperCols = []
+    keeperCols = []
+    for col in df.columns:
+        try:
+            float(df[col][1])
+            if col != "LINKNO" and col != "catchment" and col != "ID" and col != "FEOW_ID":
+                keeperCols.append(col)
+            else:
+                dropperCols.append(col)
+        except:
+            dropperCols.append(col)
+    rfdfDroppers =  rfdf[dropperCols]
+    rfdf =  rfdf[keeperCols]
 
     # normalize
     meanVals = rfdf.mean() 
@@ -60,6 +73,10 @@ def imputeRandomForest(df):
     # de-normalize
     rfdf = rfdf * stdVals
     rfdf = rfdf + meanVals
+    
+    for col in rfdfDroppers.columns:
+        rfdf[col] = rfdfDroppers[col]
+
     rfdf.to_csv(os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_imputedRF.csv"))   
     
     # save the mean scores
@@ -80,7 +97,7 @@ def imputeChanges():
 
     # impute via a random forest
     imputeRandomForest(df)
-    
+     
     # impute via the correlation matrix
 
     #df = df.drop(df.columns[0], axis=1)

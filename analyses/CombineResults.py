@@ -26,6 +26,10 @@ def _combine(df):
     with open(os.path.join(logPath, "log_combiningData.txt"), "w+") as logFile:
         logFile.write("size of df prior to removal of rows with < 5 predictor features: " + str(mask.shape[0]) + "\n")
         logFile.write("size of df after removal of rows with < 5 predictor features: " + str(len(df[df.columns[0]])) + "\n")
+
+
+        logFile.write("number of catchments wtih complete predictors: " + str(np.sum(~df["pommfSlope"].isna())) + "\n")
+        
     path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df.to_csv(path, index=False)
 

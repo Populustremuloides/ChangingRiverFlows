@@ -131,6 +131,7 @@ def barChartNonlinear(tag):
     plt.legend(handles[::-1], labels[::-1], title="feature category", loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=0)
     plt.title("Contributions of Features to Random Forest Model Decision Making")
+    plt.xlabel("")
     plt.ylim(-2,np.max(nonlinearDf.transpose().sum()) + 2)
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "modelFeatureImportancesNonlinear_" + str(tag) + ".png"))
