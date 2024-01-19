@@ -72,6 +72,7 @@ from analyses.plotDistributions import plotDistributions
 from analyses.CalculateSensitivities import calculateSensitivities
 from analyses.CalculateSensitivities2 import calculateSensitivities2
 from analyses.CalculateBiomeVulnerabilities import calculateBiomeVulnerabilities
+
 def main():
     runExploratoryAnalyses = True
 
@@ -131,7 +132,7 @@ def main():
     #analyzeCorrelations() # visual representation connections between variables
     #analyzeCorrelationsLinear() # linear regression analysis
     #analyzeCorrelationsNonlinear() # ml regression analysis
-    analyzeCorrelationsFigure() # combine together into figures
+    #analyzeCorrelationsFigure() # combine together into figures
     
     #if runExploratoryAnalyses:
         # Identify important PCA variables
@@ -154,7 +155,7 @@ def main():
     #plotFuh()
     #if runExploratoryAnalyses:
     #    exploratoryPlots(colorVar="cls3", lowerBound=0, upperBound=1) # other examples include `colorVar="m"`, lowerbound=0, upperBound=10
-    #calculateSensitivities(numIterations=1e1)
+    #calculateSensitivities(numIterations=1e4)
     #calculateSensitivities2()
     #calculateBiomeVulnerabilities()
     # FIXME: add % changes in sensitivity

@@ -10,6 +10,9 @@ from data.metadata import *
 from tqdm import tqdm
 import os
 
+
+mpl.use('Agg')
+
 seismic = mpl.cm.get_cmap('seismic')
 seismic_r = mpl.cm.get_cmap('seismic_r')
 PiYG = mpl.cm.get_cmap('PiYG')
@@ -24,15 +27,15 @@ PuOr = mpl.cm.get_cmap("PuOr")
 PuOr_r = mpl.cm.get_cmap("PuOr_r")
 
 varToTitle = {
-        "masdMean":"Mean Annual Specific Dicharge (L/d/km$^2$)",
+        "masdMean":"Mean Annual Specific Dicharge\n(L/d/km$^2$)",
         "masdSlope":"Change in Mean Annual\nSpecific Discharge (L/d/km$^2$) / year",
         "masdPercentChange":"Percent Change in Mean\nAnnual Specific Discharge",
         "domfMean":"Day of Mean Flow",
-        "domfSlope":"Change in Day of Mean Flow (days / year)",
+        "domfSlope":"Change in Day of Mean Flow\n(days / year)",
         "dopfMean":"Day of Peak Flow (days)",
         "dopfSlope":"Change in Day of Peak Flow (days /year)",
         "pommfMean":"Period of Mean Flow (days)",
-        "pommfSlope":"Change in Period of Mean Flow (days / year)",
+        "pommfSlope":"Change in Period of Mean Flow\n(days / year)",
         "d_pMean":"Runoff Ratio",
         "d_pSlope":"Change in Runoff Ratio per Year",
         "d_pPercentChange":"Percent Change in\nRunoff Ratio per Year",
@@ -62,11 +65,15 @@ varToTitleS = {
         }
 
 
-def plotVar(var, df, dfAll, lowerBound, upperBound, logFile, cmap="seismic", randomForest=False):
+def plotVar(var, df, dfAll, ax, fig, lowerBound, upperBound, logFile, cmap="seismic", randomForest=False):
     # width, height
-    fig = plt.figure(figsize=(9 * 2, 6 * 1.5))
 
-    ax = fig.add_subplot(1,1,1, projection=ccrs.InterruptedGoodeHomolosine()) #Robinson()) #ccrs.PlateCarree())
+    # Remove the tick labels
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
+    # Remove the tick marks
+    ax.tick_params(axis='both', which='both', length=0)
+
     ax.set_global()
     ax.add_feature(cfeature.COASTLINE)
     sortingIndices = np.argsort(df[var])
@@ -86,20 +93,16 @@ def plotVar(var, df, dfAll, lowerBound, upperBound, logFile, cmap="seismic", ran
     cbar = fig.colorbar(scatter, ax=ax, orientation="vertical")
     cbar.set_label(varToTitle[var], fontsize=25)
     cbar.ax.tick_params(labelsize=25)
+    cbar.ax.yaxis.get_offset_text().set_fontsize(25)
+
     legend = plt.legend()
     for label in legend.get_texts():
-        label.set_fontsize(16)  # Set the desired fontsize (e.g., 12)
+        label.set_fontsize(23)  # Set the desired fontsize (e.g., 12)
 
         # Adjust the marker size for legend handles (icons)
         for handle in legend.legendHandles:
-                handle.set_sizes([50])
+                handle.set_sizes([70])
     plt.tight_layout()
-    if randomForest:
-        plt.savefig(os.path.join(figurePath, varToTitleS[var] + "_RF.png"), dpi=300)
-    else:
-        plt.savefig(os.path.join(figurePath, varToTitleS[var] + "_GD.png"), dpi=300)
-    plt.clf()
-    plt.close()
 
 def mapAll(randomForest=False):
 
@@ -126,85 +129,161 @@ def mapAll(randomForest=False):
 
     # Budget Deficits
     with open(os.path.join(logPath, "log_mappAll.txt"), "w+") as logFile:
+        #plt.grid(False)
+    
+
+        # Deficit Figure ***************************************************************
+        fig = plt.figure(figsize=(9 * 2, 6 * 1.5))
+        #fig, ax = plt.subplots() 
+        #fig.patch.set_edgecolor('none')
+        #fig.patch.set_linewidth(0)
+
+
+
+        ax = fig.add_subplot(1,1,1, projection=ccrs.InterruptedGoodeHomolosine())
+
+        # Remove the tick labels
+        #ax.set_xticklabels([])
+        #ax.set_yticklabels([])
+        # Remove the tick marks
+        #ax.tick_params(axis='both', which='both', length=0)
 
         lowerBound = -250 #np.min(np.sort(df["budget_deficit"])[50:])
         upperBound = 250 #-1 * lowerBound
-        plotVar("percent_deficit", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic", randomForest=randomForest)
+        plotVar("percent_deficit", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
         loop.update(1)
+
+        plt.savefig(os.path.join(figurePath, varToTitleS["percent_deficit"] + "_GD.png"), dpi=300)        
+        plt.clf()
+        plt.close()
+
+        # Fuh Figure *******************************************************************
+        fig = plt.figure(figsize=(9 * 2, 6 * 1.5)) 
+        ax = fig.add_subplot(1,1,1, projection=ccrs.InterruptedGoodeHomolosine())
+
+
 
         lowerBound = 0
         upperBound = 8
-        plotVar("m", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
+        plotVar("m", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
         loop.update(1)
+
+        plt.savefig(os.path.join(figurePath, varToTitleS["m"] + "_GD.png"), dpi=300,  x_inches='tight', pad_inches=0, frameon=False)
+        plt.clf()
+        plt.close()
+        
+        # Main Text Figure ***********************************************************
+        
+        fig = plt.figure(figsize=(16 * 2.3, 13 * 2.3))
 
         # runoff ratio
-        lowerBound = 0
-        upperBound = 1
-        plotVar("d_pMean", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
-        loop.update(1)
-
-
-        lowerBound = -0.03
-        upperBound = 0.03
-        plotVar("d_pSlope", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
-        loop.update(1)
-
+        ax = fig.add_subplot(4, 2, 1, projection=ccrs.InterruptedGoodeHomolosine())
         lowerBound = -10
         upperBound = 10
-        plotVar("d_pPercentChange", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        plotVar("d_pPercentChange", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
         loop.update(1)
 
+        ax = fig.add_subplot(4, 2, 2, projection=ccrs.InterruptedGoodeHomolosine())
+        lowerBound = 0
+        upperBound = 1
+        plotVar("d_pMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        loop.update(1)
 
         # mean annual specific discharge
-        lowerBound = 0
-        upperBound = 5e6
-        plotVar("masdMean", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
-        loop.update(1)
-
-        lowerBound = -1e5
-        upperBound = 1e5
-        plotVar("masdSlope", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
-        loop.update(1)
-
+        ax = fig.add_subplot(4, 2, 3, projection=ccrs.InterruptedGoodeHomolosine())
         lowerBound = -10
         upperBound = 12
-        plotVar("masdPercentChange", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        plotVar("masdPercentChange", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        loop.update(1)
+
+        ax = fig.add_subplot(4, 2, 4, projection=ccrs.InterruptedGoodeHomolosine())
+        lowerBound = 0
+        upperBound = 5e6
+        plotVar("masdMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        loop.update(1)
+
+        # day of mean flow
+        ax = fig.add_subplot(4, 2, 5, projection=ccrs.InterruptedGoodeHomolosine())
+        lowerBound = -9
+        upperBound = 9
+        plotVar("domfSlope", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
+        loop.update(1)
+
+        ax = fig.add_subplot(4, 2, 6, projection=ccrs.InterruptedGoodeHomolosine())
+        lowerBound = 110
+        upperBound = 260
+        plotVar("domfMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
         loop.update(1)
 
         # period of mean flow
-
-        lowerBound = 20
-        upperBound = 300
-        plotVar("pommfMean", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
-        loop.update(1)
-
-
+        ax = fig.add_subplot(4, 2, 7, projection=ccrs.InterruptedGoodeHomolosine())
         lowerBound = -10
         upperBound = 10
-        plotVar("pommfSlope", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        plotVar("pommfSlope", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
         loop.update(1)
 
-
-        # day of mean flow
-
-        lowerBound = 110
-        upperBound = 260
-        plotVar("domfMean", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
+        ax = fig.add_subplot(4, 2, 8, projection=ccrs.InterruptedGoodeHomolosine())
+        lowerBound = 20
+        upperBound = 300
+        plotVar("pommfMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
         loop.update(1)
 
-        lowerBound = -9
-        upperBound = 9
-        plotVar("domfSlope", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
+        if randomForest:
+            plt.savefig(os.path.join(figurePath, "map_mainText_RF.png"), dpi=300, x_inches='tight', pad_inches=0, frameon=False)
+        else:
+            plt.savefig(os.path.join(figurePath, "map_mainText_GD.png"), dpi=300, x_inches='tight', pad_inches=0, frameon=False)
+        plt.clf()
+        plt.close()
+
+        # Supplemental Figure *******************************************************************************
+
+        fig = plt.figure(figsize=(18 * 2, 13 * 2))
+
+        # Runoff Ratio (raw)        
+
+        lowerBound = -0.03
+        upperBound = 0.03
+        ax = fig.add_subplot(3, 2, 1, projection=ccrs.InterruptedGoodeHomolosine())
+        plotVar("d_pSlope", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        loop.update(1)
+
+        lowerBound = 0
+        upperBound = 1
+        ax = fig.add_subplot(3, 2, 2, projection=ccrs.InterruptedGoodeHomolosine())
+        plotVar("d_pMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        loop.update(1)
+
+        # mean annual specific discharge (raw)
+        
+        lowerBound = -1e5
+        upperBound = 1e5
+        ax = fig.add_subplot(3, 2, 3, projection=ccrs.InterruptedGoodeHomolosine())
+        plotVar("masdSlope", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
+        loop.update(1)
+
+        lowerBound = 0
+        upperBound = 5e6
+        ax = fig.add_subplot(3, 2, 4, projection=ccrs.InterruptedGoodeHomolosine())
+        plotVar("masdMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, cmap="seismic_r", randomForest=randomForest)
         loop.update(1)
 
         # day of peak flow
 
-        lowerBound = 100
-        upperBound = 300
-        plotVar("dopfMean", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
-        loop.update(1)
-
         lowerBound = -20
         upperBound = 20
-        plotVar("dopfSlope", df, dfAll, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
+        ax = fig.add_subplot(3, 2, 5, projection=ccrs.InterruptedGoodeHomolosine())
+        plotVar("dopfSlope", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
         loop.update(1)
+
+        lowerBound = 100
+        upperBound = 300
+        ax = fig.add_subplot(3, 2, 6, projection=ccrs.InterruptedGoodeHomolosine())
+        plotVar("dopfMean", df, dfAll, ax, fig, lowerBound=lowerBound, upperBound=upperBound, logFile=logFile, randomForest=randomForest)
+        loop.update(1)
+
+        if randomForest:
+            plt.savefig(os.path.join(figurePath, "map_supplemental_RF.png"), dpi=300)
+        else:
+            plt.savefig(os.path.join(figurePath, "map_supplemental_GD.png"), dpi=300)
+        plt.clf()
+        plt.close()

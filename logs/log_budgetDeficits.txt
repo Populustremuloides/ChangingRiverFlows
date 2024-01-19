@@ -1,2 +1,11 @@
 The median % budget deficit value was: -11.081122519644136
 The median budget deficit value was: -601167856.5003257
+number of catchments with postiive deficit: 436
+number of catchments with negative deficit: 712
+total area with direct budget deficit measurements available 52022531.16671401
+% area with positive deficit: 36.15377692287377
+% area with negative deficit: 63.846223077126254
+median value for catchments with positive deficit: 19.67873265520455
+weighted mean value for catchments with positive deficit: 28.153518482278937
+median value for catchments with negative deficit: -37.56056781089852
+weighted mean value for catchments with negative deficit: -74.83143333834678

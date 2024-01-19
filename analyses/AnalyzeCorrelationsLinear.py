@@ -66,6 +66,7 @@ def linearAnalysis(df, tag, numRepeats):
             mask = np.random.choice(mask, size=mask.shape[0], replace=False)
             trainDf = ldf[mask]
             testDf = ldf[~mask]
+            
 
             # separate out the data
             yTest = testDf[predictable].to_numpy()
@@ -110,6 +111,4 @@ def analyzeCorrelationsLinear():
         df = pd.read_csv(dataFilePath)
         df = df[np.array(~df["p_petSlope"].isna())] # keep only the rows for which we have data
         linearAnalysis(df, tag, numRepeats)
-
-
 
