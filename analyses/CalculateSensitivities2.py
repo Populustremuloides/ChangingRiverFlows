@@ -231,8 +231,15 @@ def getInteraction(df, var1, var2, var3):
     d2 = np.array(df[var2])
     d3 = np.array(df[var3])
     d4 = np.ones_like(d3) 
-    data = np.array([d4, d2, d2 * d3, d3]).T
+    data = np.array([d2, d2 * d3, d3]).T
+    data = data - np.mean(data, axis=0)
+    data = data / np.std(data, axis=0)
 
+    d4 = np.expand_dims(d4, axis=0).T
+    data = np.concatenate((d4, data), axis=1)
+
+    d1 = d1 - np.mean(d1)
+    d1 = d1 / np.std(d1)
     reg = TheilSenRegressor().fit(data, d1) 
 
     return reg.coef_, reg.score(data, d1)

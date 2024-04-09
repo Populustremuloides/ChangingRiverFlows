@@ -156,7 +156,7 @@ def main():
     #if runExploratoryAnalyses:
     #    exploratoryPlots(colorVar="cls3", lowerBound=0, upperBound=1) # other examples include `colorVar="m"`, lowerbound=0, upperBound=10
     #calculateSensitivities(numIterations=1e4)
-    #calculateSensitivities2()
+    calculateSensitivities2()
     #calculateBiomeVulnerabilities()
     # FIXME: add % changes in sensitivity
     # FIXME: make a world map of potential flow

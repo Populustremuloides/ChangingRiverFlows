@@ -39,7 +39,7 @@ varToTitle = {
         "d_pMean":"Runoff Ratio",
         "d_pSlope":"Change in Runoff Ratio per Year",
         "d_pPercentChange":"Percent Change in\nRunoff Ratio per Year",
-        "m":"Fuh's Parameter",
+        "m":"Fuh's Parameter (m)",
         "budget_deficit":"Budget Deficit (Liters)",
         "percent_deficit":"% Budget Deficit"
         }
@@ -160,8 +160,6 @@ def mapAll(randomForest=False):
         # Fuh Figure *******************************************************************
         fig = plt.figure(figsize=(9 * 2, 6 * 1.5)) 
         ax = fig.add_subplot(1,1,1, projection=ccrs.InterruptedGoodeHomolosine())
-
-
 
         lowerBound = 0
         upperBound = 8
