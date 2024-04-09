@@ -226,20 +226,48 @@ def writeSensitiity(oFile, slopeL, slopeU, rSquaredL, rSquaredU, var1, var2, var
         oFile.writelines("coefficient of determination of upper group: " + str(rSquaredU) + "\n")
         oFile.writelines("***************************************\n\n")
 
-def getInteraction(df, var1, var2, var3):
+def getSingle(df, var1, var2, normalize=True):
+    d1 = np.array(df[var1])
+    d2 = np.array(df[var2])
+    d3 = np.ones_like(d2) 
+    data = np.array([d2]).T
+
+    # normalize 
+    if normalize:
+        data = data - np.mean(data, axis=0)
+        data = data / np.std(data, axis=0)
+
+    d3 = np.expand_dims(d3, axis=0).T
+    data = np.concatenate((d3, data), axis=1)
+    
+    if normalize:
+        d1 = d1 - np.mean(d1)
+        d1 = d1 / np.std(d1)
+
+    reg = TheilSenRegressor().fit(data, d1) 
+
+    return reg.coef_, reg.score(data, d1)
+   
+
+def getInteraction(df, var1, var2, var3, normalize=True):
     d1 = np.array(df[var1])
     d2 = np.array(df[var2])
     d3 = np.array(df[var3])
     d4 = np.ones_like(d3) 
     data = np.array([d2, d2 * d3, d3]).T
-    data = data - np.mean(data, axis=0)
-    data = data / np.std(data, axis=0)
+
+    # normalize 
+    if normalize:
+        data = data - np.mean(data, axis=0)
+        data = data / np.std(data, axis=0)
 
     d4 = np.expand_dims(d4, axis=0).T
     data = np.concatenate((d4, data), axis=1)
+    
+    if normalize:
+        d1 = d1 - np.mean(d1)
+        d1 = d1 / np.std(d1)
 
-    d1 = d1 - np.mean(d1)
-    d1 = d1 / np.std(d1)
     reg = TheilSenRegressor().fit(data, d1) 
 
     return reg.coef_, reg.score(data, d1)
@@ -255,6 +283,12 @@ def calculateSensitivities2(numIterations=1e2):
     df["cls3_100"] = 100 * df["cls3"]
     df["cls5_100"] = 100 * df["cls5"]
     df["forest_100"] = 100 * df["forest"]
+    
+    with open(os.path.join(logPath, "log_sensitivitiesAndCorrelations.txt"), "w+") as logFile:        
+        coefficients, rSquared = getSingle(df, var1="forest_100", var2="logArea", normalize=False)
+        logFile.write("correlation between log area and forest cover:\n")
+        logFile.write("bias and log area coefficients: " + str(coefficients) + "\n")
+        logFile.write("r-Squared value: " + str(rSquared))
 
     variables = [
             ["masdPercentChange", "maspPercentChange", "m"],
@@ -275,7 +309,8 @@ def calculateSensitivities2(numIterations=1e2):
 
     outDict = {"var1_target":[], "var2":[],"var3":[],"intercept":[], "var2Slope":[],"interactionSlope":[],"var3Slope":[], "r_squared":[]} 
     for var1, var2, var3 in variables:
-        coefficients, rSquared = getInteraction(df, var1, var2, var3)
+        normalize = False # decided to not normalize any inputs, but keeping the option for code flexibility
+        coefficients, rSquared = getInteraction(df, var1, var2, var3, normalize)
         outDict["var1_target"].append(var1)
         outDict["var2"].append(var2)
         outDict["var3"].append(var3)
