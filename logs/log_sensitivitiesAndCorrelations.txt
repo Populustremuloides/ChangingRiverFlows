@@ -1,3 +1,5 @@
 correlation between log area and forest cover:
 bias and log area coefficients: [ 41.90736404 -10.56062748]
-r-Squared value: 0.054888940666382946
+r-Squared value: 0.054888940666382946correlation between forest cover and m:
+bias and log area coefficients: [ 34.05886935 -10.16116177]
+r-Squared value: -0.013192288323982337

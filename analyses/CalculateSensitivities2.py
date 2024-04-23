@@ -289,9 +289,15 @@ def calculateSensitivities2(numIterations=1e2):
         logFile.write("correlation between log area and forest cover:\n")
         logFile.write("bias and log area coefficients: " + str(coefficients) + "\n")
         logFile.write("r-Squared value: " + str(rSquared))
+        coefficients, rSquared = getSingle(df, var1="forest_100", var2="m", normalize=False)
+        logFile.write("correlation between forest cover and m:\n")
+        logFile.write("bias and log area coefficients: " + str(coefficients) + "\n")
+        logFile.write("r-Squared value: " + str(rSquared))
 
     variables = [
             ["masdPercentChange", "maspPercentChange", "m"],
+            ["p_petSlope","d_pSlope", "maspMean"],
+            ["p_petSlope","d_pSlope", "matMean"],
             ["p_petSlope", "pommfSlope","meanPercentDC_ModeratelyWell"],
             ["p_petSlope", "pommfSlope","meanPercentDC_ModeratelyWell"],
             ["domfSlope", "dompSlope", "cls5_100"],
