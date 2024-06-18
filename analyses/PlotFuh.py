@@ -16,6 +16,7 @@ def plotFuh():
     dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df = pd.read_csv(dataFilePath)
     df = df[~df["d_pSlope"].isna()]
+    df = df[df["percent_deficit"] > -200] # remove  an outlier
 
     colorVar = "d_pSlope"
     xVar = "p_petMean"
@@ -33,13 +34,14 @@ def plotFuh():
     #m = getM(colorVar, cmap, df)
     #cs = getColors(colorVar, m, df, transform=None)
     
+    sortIndices = df.index[np.argsort(df["m"])]
 
     lowerBound = 0
-    upperBound = 8
+    upperBound = 5
     norm = plt.Normalize(vmin=lowerBound, vmax=upperBound) 
-    scatterPlot = axs[0].scatter(x=df[xVar], y=df[yVar], c=df["m"], cmap="seismic", norm=norm, alpha=0.7)
-    axs[0].set_ylim(-0.1, 1.2)
-    axs[0].set_xlabel("Mean value of\nprecipitation \ evapotranspiration", fontsize=15)
+    scatterPlot = axs[0].scatter(x=df[xVar][sortIndices], y=df[yVar][sortIndices], c=df["m"][sortIndices], cmap="seismic_r", norm=norm, alpha=0.7)
+    axs[0].set_ylim(-0.1, 1.2) 
+    axs[0].set_xlabel("Mean value of\nP / PET", fontsize=15)
     axs[0].set_ylabel(predictorsToPretty[yVar], fontsize=15)
     axs[0].legend()
     axs[0].set_title("Fuh's Equation", fontsize=17)
@@ -60,14 +62,15 @@ def plotFuh():
     axs[1].set_ylabel("count", fontsize=15)
     axs[1].grid()   
 
-    cAreas = np.log10(np.array(df["Catchment Area"]) + 1)
-    norm = plt.Normalize(vmin=np.min(cAreas), vmax=np.max(cAreas))
-    scatter = axs[2].scatter(df["forest"], df["m"], c=cAreas, cmap="PuOr", norm=norm)
-    cbar = fig.colorbar(scatter, ax=axs[2], orientation="vertical")
-    cbar.set_label("Log$_{10}$ Catchment Area (km$^2$)", fontsize=15)
-    cbar.ax.tick_params(labelsize=15)
+    #cAreas = df["m"] #np.log10(np.array(df["Catchment Area"]) + 1)
+    #norm = plt.Normalize(vmin=np.min(cAreas), vmax=np.max(cAreas))
+    scatter = axs[2].scatter(df["forest"][sortIndices], df["Catchment Area"][sortIndices], c=df["m"][sortIndices], cmap="seismic_r", norm=norm)
+    #cbar = fig.colorbar(scatter, ax=axs[2], orientation="vertical")
+    #cbar.set_label("Log$_{10}$ Catchment Area (km$^2$)", fontsize=15)
+    #cbar.ax.tick_params(labelsize=15)
+    axs[2].set_yscale("log")
     axs[2].set_xlabel("Proportion Forest Cover", fontsize=15)
-    axs[2].set_ylabel("m value", fontsize=15)
+    axs[2].set_ylabel("Catchment Area", fontsize=15)
     axs[2].grid()   
     axs[2].set_title("Correlates of Fuh's Paramter", fontsize=17)
     plt.tight_layout()
@@ -80,47 +83,36 @@ def plotFuh():
     fig = plt.figure(figsize=(13, 4.5))
     axs = []
     axs.append(fig.add_subplot(131))
-    axs.append(fig.add_subplot(132))
-    axs.append(fig.add_subplot(133, sharey=axs[-1], sharex=axs[-1]))
-    #fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(13, 4.5))
-    
-    norm = plt.Normalize(vmin=0, vmax=8)
+    axs.append(fig.add_subplot(132, sharey=axs[-1]))
+    axs.append(fig.add_subplot(133, sharey=axs[-1]))
+
+    norm = plt.Normalize(vmin=0, vmax=5)
     colorVar = "m"
     sortIndices = np.argsort(df[colorVar])
-    scatter = axs[0].scatter(np.array(df["forest"])[sortIndices], np.array(df["percent_deficit"])[sortIndices], c=np.array(df[colorVar])[sortIndices], norm=norm, cmap="seismic")
-    cbar = fig.colorbar(scatter, ax=axs[0], orientation="vertical")
-    cbar.set_label("Fuh's Paramter", fontsize=14)
-    cbar.ax.tick_params(labelsize=12)
-    #axs[0].set_title("$\\frac{P - ET - Q}{P}$ (% Water Budget Deicit)", fontsize=17)
-    axs[0].set_xlabel("Forest Cover", fontsize=15)
-    axs[0].set_ylabel("$\\frac{P - ET - Q}{P}$ (% Water Budget Deficit)", fontsize=15)
-    #axs[0].set_xscale("log")
+
+    # First subplot
+    scatter = axs[0].scatter(np.array(df["p_petMean"])[sortIndices], np.array(df["percent_deficit"])[sortIndices], c=np.array(df[colorVar])[sortIndices], norm=norm, cmap="seismic_r")
+    axs[0].set_xlabel("P / PET (wetness index)", fontsize=15)
+    axs[0].set_ylabel("$\\frac{P - ET - Q}{P}$ (% Water Budget Imbalance per Year)", fontsize=12)
     axs[0].grid()
 
-    scatter = axs[1].scatter(np.array(df["Catchment Area"]), np.array(df["maspMean"]) - np.array(df["masetMean"]),c=df["forest"], cmap="PiYG", label="P - ET") 
-    #cbar = fig.colorbar(scatter, ax=axs[1], orientation="vertical")
-    #cbar.set_label("Forest Cover", fontsize=10)
-    #cbar.ax.tick_params(labelsize=12)
-    #axs[1].set_title("P - ET (potential discharge)", fontsize=17)
-    axs[1].set_xlabel("Catchment Area", fontsize=15)
-    axs[1].set_ylabel("P - ET (L / km$^2\cdot$Day)", fontsize=15)
+    # Second subplot
+    scatter = axs[1].scatter(np.array(df["maspMean"])[sortIndices], np.array(df["percent_deficit"])[sortIndices], c=np.array(df[colorVar])[sortIndices], norm=norm, cmap="seismic_r")
+    axs[1].set_xlabel("Mean Annual Specific Precipitation", fontsize=15)
+    #axs[1].set_ylabel("$\\frac{P - ET - Q}{P}$ (% Water Budget Deficit)", fontsize=15)
     axs[1].set_xscale("log")
-    axs[1].set_ylim(-4e6, 8e6)
     axs[1].grid()
 
-    scatter = axs[2].scatter(np.array(df["Catchment Area"]), np.array(df["masdMean"]), c=df["forest"], cmap="PiYG", label="P - ET") 
+    # Third subplot
+    scatter = axs[2].scatter(np.array(df["forest"])[sortIndices], np.array(df["percent_deficit"])[sortIndices], c=np.array(df[colorVar])[sortIndices], norm=norm, cmap="seismic_r")
     cbar = fig.colorbar(scatter, ax=axs[2], orientation="vertical")
-    cbar.set_label("Forest Cover", fontsize=14)
+    cbar.set_label("Fuh's Parameter", fontsize=14)
     cbar.ax.tick_params(labelsize=12)
-    #axs[2].set_title("Q (discharge)", fontsize=17)
-    axs[2].set_xlabel("Catchment Area", fontsize=15)
-    axs[2].set_ylabel("Q (L / km$^2\cdot$Day)", fontsize=15)
-    axs[2].set_xscale("log")
+    axs[2].set_xlabel("Proportion Forest Cover", fontsize=15)
+    #axs[2].set_ylabel("$\\frac{P - ET - Q}{P}$ (% Water Budget Deficit)", fontsize=15)
     axs[2].grid()
-    
+
     plt.tight_layout()
     plt.savefig(os.path.join(figurePath, "fuh_and_budget_deficit.png"))
     plt.clf()
     plt.close()
-    
-

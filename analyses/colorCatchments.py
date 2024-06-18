@@ -26,7 +26,7 @@ with open(loggingPath, "w+") as logFile:
 degreesC = "$^{\circ}$C"
 delta = r"$\Delta$"
 
-seismic = mpl.cm.get_cmap('seismic')
+seismic = cm.get_cmap('seismic')
 seismic_r = mpl.cm.get_cmap('seismic_r')
 PiYG = mpl.cm.get_cmap('PiYG')
 PiYG_r = mpl.cm.get_cmap('PiYG_r')

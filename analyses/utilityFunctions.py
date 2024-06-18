@@ -2,7 +2,7 @@ from scipy.stats import theilslopes
 import numpy as np
 from data.metadata import *
 
-from scipy.signal import blackman
+from scipy.signal.windows import blackman
 # utility functions start with u_*
 
 def u_regressionFunction(x, y):

@@ -1,6 +1,7 @@
 import os
 from data.metadata import *
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def _combine(df):
 
@@ -12,6 +13,13 @@ def _combine(df):
 
     predictors = list(predictorsToPretty.keys())
     predictors.remove("m") # Fuh's parameter hasn't been calculated yet
+    
+    realPredictors = []
+    for predictor in predictors:
+        if "_100" not in predictor:
+            realPredictors.append(predictor)
+    predictors = realPredictors
+
     mask = []
     for index, row in df.iterrows():
         numNotNan = np.sum(~row[predictors].isna())
@@ -32,6 +40,13 @@ def _combine(df):
         
     path = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_raw.csv")
     df.to_csv(path, index=False)
+    
+    #for col in df.columns:
+    #    print(col)
+    #norm = plt.Normalize(vmin=-5, vmax=5)
+    #plt.scatter(df["Longitude"], df["Latitude"], c=df["percent_deficit"], s=0.1, cmap="PiYG", norm=norm)
+    #plt.colorbar(label="percent deficit")
+    #plt.savefig("sanityCheck.png")
 
 def combineResults():
     # read in the metadata file(s)

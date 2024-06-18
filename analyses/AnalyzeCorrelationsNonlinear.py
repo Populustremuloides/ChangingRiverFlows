@@ -23,7 +23,10 @@ def getDroppers(df, tag):
                 print("dropping", col, "for linear regression analysis because of sparsity.")
                 logFile.writelines(col + "\n")
             else:
-                keepers.append(col)
+                if "_100" in col:
+                    droppers.apepnd(col)
+                else:
+                    keepers.append(col)
     return droppers, keepers
 
 def getTrainMask(df):
@@ -76,7 +79,7 @@ def nonlinearAnalysis(df, tag, numRepeats):
             xTrain = trainDf[trainDf.columns[:-1]].to_numpy()
 
             # run the model
-            model = RandomForestRegressor()
+            model = RandomForestRegressor(n_estimators=100)
             model.fit(xTrain,yTrain)
             score = model.score(xTest, yTest)
             importances = model.feature_importances_
@@ -106,7 +109,7 @@ def nonlinearAnalysis(df, tag, numRepeats):
 def analyzeCorrelationsNonlinear():
     numRepeats = 10
 
-    tags = ["raw","imputed"]
+    tags = ["imputed"] #["raw","imputed"] # temporarily get rid of this since we don't use "raw" in the manuscript
 
     for tag in tags:
         dataFilePath = os.path.join(outputFilesPath, "combinedTimeseriesSummariesAndMetadata_" + str(tag) + ".csv")

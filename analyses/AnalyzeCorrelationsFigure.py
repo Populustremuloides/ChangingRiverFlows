@@ -126,7 +126,7 @@ def barChartNonlinear(tag):
     nonlinearDf = nonlinearDf.dropna(axis=1)
     nonlinearDf, scores, targetNames = groupColumns(nonlinearDf)
     ax = nonlinearDf.plot(kind="bar",stacked=True, figsize=(12.5,5), edgecolor="black")
-    plt.ylabel("% contribution")
+    plt.ylabel("% contribution $\\times$ mean model R$^2$ on non-training data")
     handles, labels = ax.get_legend_handles_labels()
     plt.legend(handles[::-1], labels[::-1], title="feature category", loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=0)

@@ -85,25 +85,27 @@ predictablesToPretty = {
     "pommfSlope":"yearly change\nin period of\nmean flow",
     "d_pSlope":"yearly change\nin runoff ratio",
     "d_pPercentChange":"yearly % change\nin runoff ratio",
+    #"budget_deficit":"water budget\ndeficit",
+    "percent_deficit":"year % water\nbudget imbalance",
 }
 
 # ways of getting at human extractive water use
 # changes in flow vs changes in runoff ratio vs changes in pet / et ratios
 
 predictorsToPretty = {
-    "p_petSlope":"yearly change in precipitation / potential evapotranspiration",
-    "p_petPercentChange":"yearly change in precipitation / potential evapotranspiration",
+    "p_petSlope":"yearly change in P / PET",
+    "p_petPercentChange":"yearly % change in P / PET",
     "dompSlope":"yearly change in day of mean precipitation",
     "maspSlope":"mean annual specific precipitation",
     "maspPercentChange":"yearly % change in mean annual specific precipitation",
     "p_petMean":"mean value of precip / potential evapotranspiration",
     "maspMean":"mean value of mean annual specific precipitation",
     "dompMean":"mean value of day of mean precipitation",
-    "pet_pSlope":"yearly change in potential evapotranspiration / precipitation",
-    "pet_pPercentChange":"yearly % change in potential evapotranspiration / precipitation",
+    "pet_pSlope":"yearly change in PET / P",
+    "pet_pPercentChange":"yearly % change in PET / P",
     "doppetMean":"mean value of day of peak potential evapotranspiration",
-    "pet_etSlope":"yearly change in potential evapotranspiration / evapotranspiration",
-    "pet_etPercentChange":"yearly % change in potential evapotranspiration / evapotranspiration",
+    "pet_etSlope":"yearly change in PET / ET",
+    "pet_etPercentChange":"yearly % change in PET / ET",
     "dompetSlope":"yearly change in day of mean potential evapotranspiration",
     "maspetSlope":"yearly change in mean annual specific evapotranspiration",
     "maspetPercentChange":"yearly % change in mean annual specific evapotranspiration",
@@ -181,9 +183,6 @@ predictorsToPretty = {
     "meanPercentDC_Poor":"percent poorly drained",
     "meanPercentDC_ModeratelyWell":"percent moderately well drained",
     "meanPercentDC_Imperfectly":"percent imperfectly drained",
-
-    "budget_deficit":"water budget deficit",
-    "percent_deficit":"% water budget deficit",
 
     "Latitude":"Latitude",
     "Longitude":"Longitude",

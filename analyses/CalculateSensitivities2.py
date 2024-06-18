@@ -294,16 +294,67 @@ def calculateSensitivities2(numIterations=1e2):
         logFile.write("bias and log area coefficients: " + str(coefficients) + "\n")
         logFile.write("r-Squared value: " + str(rSquared))
 
+    outDict = {"var1_target":[], "var2":[],"var3":[],"intercept":[], "var2Slope":[],"interactionSlope":[],"var3Slope":[], "r_squared":[]} 
+
+    normalize = True
+    #variables = ["d_pPercentChange", "pet_pPercentChange"]
+    var1 = "d_pPercentChange"
+    var2 = "p_petPercentChange"
+
+    for var3 in list(predictorsToPretty.keys()):
+        coefficients, rSquared = getInteraction(df, var1, var2, var3, normalize)
+        outDict["var1_target"].append(var1)
+        outDict["var2"].append(var2)
+        outDict["var3"].append(predictorsToPretty[var3])
+        outDict["intercept"].append("{:.2f}".format(coefficients[0]))
+        outDict["var2Slope"].append("{:.2f}".format(coefficients[1]))
+        outDict["interactionSlope"].append("{:.2f}".format(coefficients[2]))
+        outDict["var3Slope"].append("{:.2f}".format(coefficients[3]))
+        outDict["r_squared"].append("{:.2f}".format(rSquared))
+
+    outDf = pd.DataFrame.from_dict(outDict)
+    outDf.to_csv(os.path.join(outputFilesPath, "interactions.csv"), index=False)
+
+    '''
     variables = [
-            ["masdPercentChange", "maspPercentChange", "m"],
-            ["p_petSlope","d_pSlope", "maspMean"],
-            ["p_petSlope","d_pSlope", "matMean"],
-            ["p_petSlope", "pommfSlope","meanPercentDC_ModeratelyWell"],
-            ["p_petSlope", "pommfSlope","meanPercentDC_ModeratelyWell"],
+            ["d_pPercentChange", "pet_pPercentChange", "forest"],
+            ["d_pPercentChange", "pet_pPercentChange", "maspMean"],
+            ["d_pPercentChange", "pet_pPercentChange", "m"],
+
+            ["d_pPercentChange", "pet_pPercentChange", "forest"],
+            ["d_pPercentChange", "pet_pPercentChange", "maspMean"],
+            ["d_pPercentChange", "pet_pPercentChange", "m"],
+
+
+
+
+
+            ["d_pPercentChange", "maspPercentChange", "forest"],
+            ["d_pPercentChange", "maspPercentChange", "maspMean"],
+            ["d_pPercentChange", "maspPercentChange", "m"],
+
+            ["d_pPercentChange", "matSlope", "cls3_100"],
+            ["d_pPercentChange", "matSlope", "maspMean"],
+            ["d_pPercentChange", "matSlope", "m"],
+
+            ["d_pPercentChange", "maspetPercentChange", "forest"],
+            ["d_pPercentChange", "maspetPercentChange", "maspMean"],
+            ["d_pPercentChange", "maspetPercentChange", "m"],
+
+            ["d_pPercentChange", "masetPercentChange", "forest"],
+            ["d_pPercentChange", "masetPercentChange", "maspMean"],
+            ["d_pPercentChange", "masetPercentChange", "m"],
+
+            ["pet_pSlope","d_pSlope", "maspMean"],
+            ["pet_pSlope","d_pSlope", "matMean"],
+            ["pet_pSlope", "pommfSlope","meanPercentDC_ModeratelyWell"],
+            ["pet_pSlope", "pommfSlope","meanPercentDC_ModeratelyWell"],
             ["domfSlope", "dompSlope", "cls5_100"],
             ["domfSlope", "dompSlope", "cls3_100"],
             ["domfSlope", "dompSlope", "cls1_100"],
             ["d_pPercentChange", "pet_pSlope", "m"],
+            ["d_pPercentChange", "pet_pSlope", "cls3_100"],
+            ["d_pPercentChange", "pet_pSlope", "maspMean"],
             ["masdPercentChange", "maspPercentChange", "cls3_100"],
             ["masdPercentChange", "maspPercentChange", "cls1_100"],
             ["masdPercentChange", "maspPercentChange", "forest_100"],
@@ -312,10 +363,49 @@ def calculateSensitivities2(numIterations=1e2):
             ["potentialFlow","logArea","forest_100"],
             ["potentialFlow","logArea","Dam_Count"]
             ]
+    
+    normalizes =  [
+            True, 
+            True, 
+            True, 
 
+            True, 
+            True, 
+            True, 
+
+            True, 
+            True, 
+            True, 
+
+            True, 
+            True, 
+            True, 
+
+            True, 
+            True, 
+            True, 
+
+            False,
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False, 
+            False]
     outDict = {"var1_target":[], "var2":[],"var3":[],"intercept":[], "var2Slope":[],"interactionSlope":[],"var3Slope":[], "r_squared":[]} 
-    for var1, var2, var3 in variables:
-        normalize = False # decided to not normalize any inputs, but keeping the option for code flexibility
+    for index, (var1, var2, var3) in enumerate(variables):
+    
+        normalize = normalizes[index] #False # decided to not normalize any inputs, but keeping the option for code flexibility
         coefficients, rSquared = getInteraction(df, var1, var2, var3, normalize)
         outDict["var1_target"].append(var1)
         outDict["var2"].append(var2)
@@ -328,4 +418,4 @@ def calculateSensitivities2(numIterations=1e2):
 
     outDf = pd.DataFrame.from_dict(outDict)
     outDf.to_csv(os.path.join(outputFilesPath, "interactions.csv"), index=False)
-
+    '''

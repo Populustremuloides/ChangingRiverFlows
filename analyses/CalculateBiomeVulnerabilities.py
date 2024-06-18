@@ -106,6 +106,7 @@ def calculateBiomeVulnerabilities():
         dataDict["Yearly Change in Day of Peak Flow (days)"].append(row["dopfSlope"])
         dataDict["Yearly Change in Period of Mean Flow (days)"].append(row["pommfSlope"])
         dataDict["% Budget Deficit"].append(row["percent_deficit"])
+
     '''
     for index, row in dfAll.iterrows():
         dataDict["data source"].append("Imputed")

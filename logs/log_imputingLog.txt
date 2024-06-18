@@ -1,5 +1,5 @@
 Loss = $\sum_i \sum_j |Cov_{ij}(Imputed) - Cov_{ij}(Raw)| + \sum_i \sum_j |Corr_{ij}(Imputed) - Corr_{ij}(Raw)|$
 data were transformed to have mean zero and standard deviation of 1 prior to imputation.
 imputed values were initialized to the distribution mean.
-final loss: 90.37909058153737
-percent Nan initially was: 29.060569261984615
+final loss: 152.45086610147592
+percent Nan initially was: 29.264485514485518

@@ -1,8 +1,9 @@
 Changes in mean model accuracy following data imputation:
-yearly % change in mean annual specific discharge: 0.023469498893879077
-yearly % change in runoff ratio: 0.001959796426531213
-yearly change in day of mean flow: 0.0009690033130612008
-yearly change in day of peak flow: 0.049314663809099206
-yearly change in mean annual specific discharge: 0.020090205760161624
-yearly change in period of mean flow: 0.01770870309845282
-yearly change in runoff ratio: 0.010203301744776532
+year % water budget imbalance: -0.054500306473777585
+yearly % change in mean annual specific discharge: 0.0041542692385003474
+yearly % change in runoff ratio: -0.01171425417264139
+yearly change in day of mean flow: 0.037304139470302144
+yearly change in day of peak flow: -0.02207895040092357
+yearly change in mean annual specific discharge: 0.05102263420424187
+yearly change in period of mean flow: -0.00274883448377679
+yearly change in runoff ratio: 0.06324084586995372

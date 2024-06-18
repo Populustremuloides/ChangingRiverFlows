@@ -74,65 +74,65 @@ from analyses.CalculateSensitivities2 import calculateSensitivities2
 from analyses.CalculateBiomeVulnerabilities import calculateBiomeVulnerabilities
 
 def main():
-    runExploratoryAnalyses = True
+    runExploratoryAnalyses = False
 
     # adjust timeseries for ease of computation ***************************
-    #combineTimeseries()
-    #addLocalWaterYear()
+    combineTimeseries()
+    addLocalWaterYear()
 
     # calculate budget deficits
-    #calculateBudgetDeficits()
+    calculateBudgetDeficits()
 
     # ratio analyses ******************************************************
-    #analyzeD_P() # discharge / precip (runoff ratio)
-    #analyzePET_ET() #
-    #analyzePET_P() # Budyko x-axis (aridity index)
-    #analyzeET_P() # Budyko y-axis
-    #analyzeP_PET() # Humidity Index
-    #analyzeP_ET() # Humidity Index
+    analyzeD_P() # discharge / precip (runoff ratio)
+    analyzePET_ET() #
+    analyzePET_P() # Budyko x-axis (aridity index)
+    analyzeET_P() # Budyko y-axis
+    analyzeP_PET() # Humidity Index
+    analyzeP_ET() # Humidity Index
 
     # magnitude of timeseries (mean annual) *******************************
-    #analyzeMASD() # specific discharge
-    #analyzeMASP() # specific precipitation
-    #analyzeMAT() # temperature
-    #analyzeMASET() # specific evapotranspiration
-    #analyzeMASPET() # specific potential evapotranspiration
+    analyzeMASD() # specific discharge
+    analyzeMASP() # specific precipitation
+    analyzeMAT() # temperature
+    analyzeMASET() # specific evapotranspiration
+    analyzeMASPET() # specific potential evapotranspiration
 
     # timing of timeseries (day of) ***************************************
 
     # mean
-    #analyzeDOMF() # flow
-    #analyzeDOMP() # precip
-    #analyzeDOMT() # temperature
-    #analyzeDOMET() # et
-    #analyzeDOMPET() # pet
+    analyzeDOMF() # flow
+    analyzeDOMP() # precip
+    analyzeDOMT() # temperature
+    analyzeDOMET() # et
+    analyzeDOMPET() # pet
 
     # peak
-    #analyzeDOPF() # flow
-    #analyzeDOPP() # precip
-    #analyzeDOPT() # temperature
-    #analyzeDOPET() # et
-    #analyzeDOPPET() # pet
+    analyzeDOPF() # flow
+    analyzeDOPP() # precip
+    analyzeDOPT() # temperature
+    analyzeDOPET() # et
+    analyzeDOPPET() # pet
 
     # spectral properties of timeseries (period of) ***********************
-    #analyzePOMMF() # flow
-    #analyzePOMMP() # precip
-    #analyzePOMMT() # temperature
-    #analyzePOMMET() # et
-    #analyzePOMMPET() # pet
+    analyzePOMMF() # flow
+    analyzePOMMP() # precip
+    analyzePOMMT() # temperature
+    analyzePOMMET() # et
+    analyzePOMMPET() # pet
 
     # combine the data with the metadata
-    #combineResults()
-    #computeM()
-    #imputeMetadata()
-    #if runExploratoryAnalyses:
-    #    pcaMetadata()
+    combineResults()
+    computeM()
+    imputeMetadata()
+    if runExploratoryAnalyses:
+        pcaMetadata()
 
     # Identify important variables
-    #analyzeCorrelations() # visual representation connections between variables
-    #analyzeCorrelationsLinear() # linear regression analysis
-    #analyzeCorrelationsNonlinear() # ml regression analysis
-    #analyzeCorrelationsFigure() # combine together into figures
+    analyzeCorrelations() # visual representation connections between variables
+    analyzeCorrelationsLinear() # linear regression analysis
+    analyzeCorrelationsNonlinear() # ml regression analysis
+    analyzeCorrelationsFigure() # combine together into figures
     
     #if runExploratoryAnalyses:
         # Identify important PCA variables
@@ -142,24 +142,22 @@ def main():
     #    analyzeCorrelationsFigurePCA() # combine together into figures
 
     # make table of highest individual correlations for each factor
-    #analyzeSpearmanCorrelations()
-    #makeTable(numToShow=5)
+    analyzeSpearmanCorrelations()
+    makeTable(numToShow=5)
 
     # global figures
-    #imputeChanges() # impute missing predicted values
-    #mapAll()
-    #mapAll(randomForest=True)
+    imputeChanges() # impute missing predicted values
+    mapAll(randomForest=False)
+    mapAll(randomForest=True)
 
     # plot changes
-    #plotDistributions()
-    #plotFuh()
-    #if runExploratoryAnalyses:
-    #    exploratoryPlots(colorVar="cls3", lowerBound=0, upperBound=1) # other examples include `colorVar="m"`, lowerbound=0, upperBound=10
-    #calculateSensitivities(numIterations=1e4)
+    plotDistributions()
+    plotFuh()
+    if runExploratoryAnalyses:
+        exploratoryPlots(colorVar="cls3", lowerBound=0, upperBound=1) # other examples include `colorVar="m"`, lowerbound=0, upperBound=10
+    calculateSensitivities(numIterations=1e4)
     calculateSensitivities2()
-    #calculateBiomeVulnerabilities()
-    # FIXME: add % changes in sensitivity
-    # FIXME: make a world map of potential flow
+    calculateBiomeVulnerabilities()
 
     print("all analyses complete")
 

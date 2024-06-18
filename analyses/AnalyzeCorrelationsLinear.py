@@ -23,7 +23,10 @@ def getDroppers(df, tag):
                 print("dropping", col, "for linear regression analysis because of sparsity.")
                 logFile.writelines(col + "\n")
             else:
-                keepers.append(col)
+                if "_100" in col:
+                    droppers.append(col)
+                else:
+                    keepers.append(col)
     return droppers, keepers
 
 def getTrainMask(df):
